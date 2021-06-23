@@ -1,0 +1,108 @@
+// Bootstrap
+@import  '~bootstrap-v4-rtl/scss/bootstrap-rtl';
+
+// Plugins
+@import "~animate.css/animate.compat.css";
+
+@import '~sweetalert2/src/sweetalert2.scss';
+
+@import "~alertifyjs/build/css/alertify.rtl.min.css";
+@import "~alertifyjs/build/css/themes/bootstrap.rtl.min.css";
+
+@import '~lity/dist/lity.min.css';
+
+/*
+Start default styles
+ */
+body {
+    margin: 0px;
+    font-family: IRANSans, sans-serif, serif;
+    box-sizing: border-box;
+    max-width: 100%;
+    background-color: rgb(250, 250, 250);
+    overflow-x: hidden;
+    background-image: url(https://www.filimo.com/assets/web/ui/img-kYh3FHO1sDmrLgucZpHmA/api/theme/logo/filimo/bg.jpg);
+    background-size: cover;
+    background-position: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+#main-wrapper {
+    position: relative;
+}
+
+main {
+    display: block;
+}
+
+html {
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+}
+
+#main-container:not(.relative) {
+    position: absolute;
+    left: 50%;
+    width: 100%;
+    max-width: 440px;
+    transform: translateX(-50%);
+    transition: all 200ms ease 0s;
+}
+
+.PmjKd::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 10px;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNjguODMyIiBoZWlnaHQ9IjI2OC44MzIiIHZpZXdCb3g9IjAgMCAyNjguODMyIDI2OC44MzIiPjxwYXRoIGZpbGw9IiM2OTY5NjkiIGQ9Ik0yNjUuMTcxIDEyNS41NzdsLTgwLTgwYy00Ljg4MS00Ljg4MS0xMi43OTctNC44ODEtMTcuNjc4IDAtNC44ODIgNC44ODItNC44ODIgMTIuNzk2IDAgMTcuNjc4bDU4LjY2MSA1OC42NjFIMTIuNWMtNi45MDMgMC0xMi41IDUuNTk3LTEyLjUgMTIuNSAwIDYuOTAyIDUuNTk3IDEyLjUgMTIuNSAxMi41aDIxMy42NTRsLTU4LjY1OSA1OC42NjFjLTQuODgyIDQuODgyLTQuODgyIDEyLjc5NiAwIDE3LjY3OCAyLjQ0IDIuNDM5IDUuNjQgMy42NjEgOC44MzkgMy42NjFzNi4zOTgtMS4yMjIgOC44MzktMy42NjFsNzkuOTk4LTgwYzQuODgyLTQuODgyIDQuODgyLTEyLjc5NiAwLTE3LjY3OHoiLz48L3N2Zz4K);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    transition: all 200ms ease 0s;
+}
+
+.auth-wrapper {
+    box-shadow: rgba(143, 143, 143, 0.21) 0px 0px 2px 1px;
+    border-radius: 4px;
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    display: inline-block;
+}
+
+.auth-wrapper .segment:not(:last-child) {
+    border-bottom: 1px solid rgb(240, 240, 240);
+}
+
+.auth-wrapper .segment {
+    padding: 30px 25px;
+    font-size: 11px;
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    align-items: center;
+}
+
+@media (max-width: 768px){
+    section.route-section {
+        padding: 0px 15px;
+    }
+    .auth-wrapper .segment {
+        padding: 20px 15px;
+        display: inline-block;
+        position: relative;
+        float: right;
+        width: 100%;
+    }
+}
+
+section.route-section {
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+}
