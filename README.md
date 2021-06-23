@@ -4,8 +4,6 @@
 [![GitHub stars](https://img.shields.io/github/stars/dizatech/identifier?style=flat-square)](https://github.com/dizatech/identifier/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/dizatech/identifier?style=flat-square)](https://github.com/dizatech/identifier/network)
 [![Total Downloads](https://img.shields.io/packagist/dt/dizatech/identifier.svg?style=flat-square)](https://packagist.org/packages/dizatech/identifier)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dizatech/identifier/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/dizatech/identifier/?branch=main)
-[![Build Status](https://scrutinizer-ci.com/g/dizatech/identifier/badges/build.png?b=main)](https://scrutinizer-ci.com/g/dizatech/identifier/build-status/main)
 [![GitHub license](https://img.shields.io/github/license/dizatech/identifier?style=flat-square)](https://github.com/dizatech/identifier/blob/master/LICENSE)
 
 Laravel Identifier Package :: simple authentication (login, register and forgot-password).
