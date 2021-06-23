@@ -1,6 +1,6 @@
 <?php
 
-namespace Dizatech\Identifier\Identifier;
+namespace Dizatech\Identifier;
 
 use Illuminate\Support\ServiceProvider;
 
