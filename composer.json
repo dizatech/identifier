@@ -1,12 +1,12 @@
 {
-    "name": "dizatech/ide",
+    "name": "dizatech/identifier",
     "type": "library",
     "description": "",
     "license": "MIT",
     "authors": [
         {
-            "name": "Vahid Ashourzadeh",
-            "email": "v.ashourzadeh@gmail.com"
+            "name": "Sina Rajabpour",
+            "email": "sina.rajabpour@outlook.com"
         }
     ],
     "minimum-stability": "dev",
@@ -18,13 +18,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Dizatech\\Attachment\\": "src/"
+            "Dizatech\\Identifier\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Dizatech\\Attachment\\DizatechAttachmentServiceProvider"
+                "Dizatech\\Identifier\\IdentifierServiceProvider"
             ]
         }
     }
