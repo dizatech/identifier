@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 
 class LoginController extends Controller
 {
-    public function show()
+    public function show($page = 'default')
     {
-        return view('vendor.dizatech-identifier.identifier');
+        return view('vendor.dizatech-identifier.identifier', [
+            'page' => $page
+        ]);
     }
 }

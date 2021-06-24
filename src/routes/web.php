@@ -6,5 +6,5 @@ Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web', 'guest']
 ], function () {
-    Route::get('login', 'LoginController@show')->name('identifier.login');
+    Route::get('/{page?}', 'LoginController@show')->name('identifier.login');
 });

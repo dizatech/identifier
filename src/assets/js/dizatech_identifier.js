@@ -6,7 +6,7 @@ $.ajaxSetup({
 });
 
 $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip();
 });
 
 // Plugins
@@ -15,3 +15,6 @@ window.Swal = require('sweetalert2');
 window.alertify = require('alertifyjs/build/alertify.min');
 
 require('lity/dist/lity.min');
+
+// login and register handler
+

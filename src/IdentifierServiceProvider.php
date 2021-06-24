@@ -2,6 +2,7 @@
 
 namespace Dizatech\Identifier;
 
+use Dizatech\Identifier\View\Components\LoginComponent;
 use Illuminate\Support\ServiceProvider;
 
 class IdentifierServiceProvider extends ServiceProvider
@@ -34,7 +35,8 @@ class IdentifierServiceProvider extends ServiceProvider
              __DIR__.'/assets/sass/' => resource_path('sass/vendor/dizatech-identifier'),
          ], 'dizatech_identifier');
 
-//         $this->loadViewComponentsAs('', [
-//         ]);
+         $this->loadViewComponentsAs('', [
+             LoginComponent::class
+         ]);
      }
 }
