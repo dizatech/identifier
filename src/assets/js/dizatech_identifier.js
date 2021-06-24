@@ -18,46 +18,71 @@ require('lity/dist/lity.min');
 
 require('jquery-ui/ui/effects/effect-slide');
 
+var url = window.location.href.replace(/\/$/, '');
+var page_type = url.substring(url.lastIndexOf('/') + 1);
 var page = 'default';
+
+$(function () {
+    if (typeof page_type != 'undefined'){
+        if (page_type === 'default' || page_type === 'register'
+            || page_type === 'code' || page_type === 'login'
+            || page_type === 'forgot'){
+            page = page_type;
+        }
+    }
+});
 
 // login and register handler
 $('.create_account').on('click', function (e) {
     e.preventDefault();
     page = 'register';
-    // $('.register_page').show("slide");
-    // $('.default_page').hide("slide");
-    // $('.login_page').hide("slide");
-    // $('.forgot_page').hide("slide");
+    window.history.pushState('', '', '/auth/register');
+    $('.default_page').hide('slide', { direction: "right" }, function(){
+        $('.register_page').show("slide", { direction: "left" });
+    });
+});
 
-    $('.default_page').hide('slide', function(){
-        $('.register_page').show("slide");
+$('.code_step').on('click', function (e) {
+    e.preventDefault();
+    page = 'code';
+    window.history.pushState('', '', '/auth/code');
+    $('.register_page').hide('slide', { direction: "right" }, function(){
+        $('.code_page').show("slide", { direction: "left" });
     });
 });
 
 $('.back-btn').on('click', function (e) {
     e.preventDefault();
-    if (page !== 'default'){
-        page = 'default';
-        $('.register_page').hide('slide', function(){
-            $('.default_page').show('slide')
-        });
-        // $('.default_page').show("slide", { direction: "left" });
-        // $('.login_page').hide("slide", { direction: "right" });
-        // $('.register_page').hide("slide", { direction: "right" });
-        // $('.forgot_page').hide("slide", { direction: "right" });
-    }else {
-        window.location = '/';
+    switch (page) {
+        case 'register':
+            page = 'default';
+            $('.register_page').hide('slide' , { direction: "left" }, function(){
+                $('.default_page').show('slide', { direction: "right" })
+            });
+            window.history.pushState('', '', '/auth/default');
+        break;
+        case 'code':
+            page = 'register';
+            $('.code_page').hide('slide' , { direction: "left" }, function(){
+                $('.register_page').show('slide', { direction: "right" })
+            });
+            window.history.pushState('', '', '/auth/register');
+        break;
+        case 'login':
+            page = 'default';
+            $('.login_page').hide('slide' , { direction: "left" }, function(){
+                $('.default_page').show('slide', { direction: "right" })
+            });
+            window.history.pushState('', '', '/auth/login');
+        break;
+        case 'forgot':
+            page = 'default';
+            $('.forgot_page').hide('slide' , { direction: "left" }, function(){
+                $('.default_page').show('slide', { direction: "right" })
+            });
+            window.history.pushState('', '', '/auth/default');
+        break;
+        default:
+            window.location = '/';
     }
-});
-
-var boxWidth = $(".box").width();
-$(".slide-left").click(function(){
-    $(".box").animate({
-        width: 0
-    });
-});
-$(".slide-right").click(function(){
-    $(".box").animate({
-        width: boxWidth
-    });
 });
