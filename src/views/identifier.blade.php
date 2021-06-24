@@ -23,7 +23,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 mx-auto main-container">
-                <a href="{{ route(config('dizatech_identifier.site_home_route')) }}" class="back-btn">بازگشت</a>
+                <a href="#" class="back-btn">بازگشت</a>
                 <div class="card default_page" style="display:@if($page == 'default') block @else none @endif">
                     <x-login-component page="default"></x-login-component>
                 </div>
