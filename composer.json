@@ -13,8 +13,8 @@
     "require": {
         "php": "7.1.*|7.2.*|7.3.*|7.4.*",
         "laravel/framework": "7.*|8.*",
-        "plank/laravel-mediable": "5.*",
-        "morilog/jalali": "3.*"
+        "dizatech/notifier": "0.*",
+        "va/cutlet-helper": "1.*"
     },
     "autoload": {
         "psr-4": {
