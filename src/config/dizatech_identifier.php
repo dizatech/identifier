@@ -4,7 +4,7 @@ return [
     'site_title' => 'پیش فرض',
 
     // full url of terms page (this will be used in register page)
-    'terms_url' => 'http://localhost.itafza.ir:8000/',
+    'terms_url' => 'http://localhost:8000/',
 
     // where did you required the dizatech_identifier.scss file ?
     // this file must be included in webpack.js as well
@@ -15,5 +15,8 @@ return [
     'js_public_path' => 'js/auth.js',
 
     // this config used to set witch mothod is availabe for users to login
-    'login_methods' => ['username','email','mobile']
+    'login_methods' => ['username','email','mobile'],
+
+    // User Model class path
+    'user_model' => \App\Models\User::class
 ];

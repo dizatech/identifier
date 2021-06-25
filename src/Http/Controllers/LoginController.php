@@ -3,6 +3,7 @@
 namespace Dizatech\Identifier\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Dizatech\Identifier\Facades\NotifierLoginFacade;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
@@ -21,15 +22,10 @@ class LoginController extends Controller
         ],[
             'mobile.required' => 'فیلد موبایل الزامی است.'
         ]);
-        \Notifier::driver('ghasedak')
-            ->templateId(1)
-            ->params(['param1' => 'passwdsd12ds'])
-            ->options(['method' => 'otp','ghasedak_template_name' => 'registration',
-                'hasPassword' => 'yes', 'receiver' => $request->mobile])
-            ->send();
+        $result = NotifierLoginFacade::sendSMS($request->mobile);
         return json_encode([
-            'status' => 200,
-            'message' => 'پیامک کد برایتان ارسال شد.'
+            'status' => $result['status'],
+            'message' => $result['message']
         ]);
     }
 }

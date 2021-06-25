@@ -172,8 +172,12 @@ function sendCode(mobile_field) {
         success: function (response) {
             hide_error_messages();
             Swal.close();
-            alertify.success(response.message);
-            after_send_code();
+            if (response.status == 200){
+                alertify.success(response.message);
+                after_send_code();
+            }else {
+                alertify.error(response.message);
+            }
         },
         error: function (response) {
             show_error_messages(response);

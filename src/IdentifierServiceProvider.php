@@ -2,6 +2,8 @@
 
 namespace Dizatech\Identifier;
 
+use Dizatech\Identifier\Facades\NotifierLoginFacade;
+use Dizatech\Identifier\Repositories\NotifierLoginRepository;
 use Dizatech\Identifier\View\Components\LoginComponent;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,7 +16,7 @@ class IdentifierServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        NotifierLoginFacade::shouldProxyTo(NotifierLoginRepository::class);
     }
 
     /**
