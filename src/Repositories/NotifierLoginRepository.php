@@ -29,7 +29,7 @@ class NotifierLoginRepository
             $diff = $this->getOtpTimeDiff($this->getLastOtp($user->id));
             return [
                 'status' => 400,
-                'message' => 'امکان ارسال مجدد تا ' . $diff . ' ثانیه'
+                'message' => 'امکان ارسال مجدد تا ' . $diff . ' دیگر'
             ];
         }
     }
@@ -135,6 +135,7 @@ class NotifierLoginRepository
 
     protected function getOtpTimeDiff($otp)
     {
-        return Carbon::parse(Carbon::now()->toDateTimeString())->diffInSeconds($otp->expires_at);
+        $diff_in_sec = Carbon::parse(Carbon::now()->toDateTimeString())->diffInSeconds($otp->expires_at);
+        return gmdate('i:s', $diff_in_sec) . ' ثانیه';
     }
 }
