@@ -18,6 +18,8 @@ require('lity/dist/lity.min');
 
 require('jquery-ui/ui/effects/effect-slide');
 
+// start init pages
+
 var url = window.location.href.replace(/\/$/, '');
 var page_type = '';
 var page = 'default';
@@ -37,6 +39,8 @@ function set_page() {
     }
 }
 
+// end init pages
+
 // login and register handler
 $('.create_account').on('click', function (e) {
     e.preventDefault();
@@ -47,10 +51,18 @@ $('.create_account').on('click', function (e) {
 
 $('.code_step').on('click', function (e) {
     e.preventDefault();
-    page = 'code';
-    change_url('','','/auth/code');
-    slide_element('register_page', 'code_page');
+    sendCode($('.register_mobile').val());
 });
+
+function after_send_code() {
+    switch (page) {
+        case 'register':
+            page = 'code';
+            change_url('','','/auth/code');
+            slide_element('register_page', 'code_page');
+            break;
+    }
+}
 
 $('.back-btn').on('click', function (e) {
     e.preventDefault();
@@ -80,6 +92,8 @@ $('.back-btn').on('click', function (e) {
     }
 });
 
+// start helper functions
+
 function slide_element(hide,show) {
     $('.' + hide).hide('slide', { direction: "right" }, function(){
         $('.' + show).show("slide", { direction: "left" });
@@ -95,3 +109,78 @@ function back_slide_element(hide,show) {
 function change_url(data,title,url) {
     window.history.pushState(data, title, url);
 }
+
+function hide_error_messages(){
+    $('.form-group')
+        .find('.invalid-feedback')
+        .addClass('d-none')
+        .find('strong').text('');
+    $('.form-group')
+        .find('.is-invalid')
+        .removeClass('is-invalid');
+}
+
+function show_error_messages(res){
+    let response = res;
+    $('.form-group')
+        .find('.invalid-feedback')
+        .addClass('d-none')
+        .find('strong').text('');
+    $('.form-group').find('.is-invalid')
+        .removeClass('is-invalid');
+    if (response.status === 422) {
+        for( const field_name in response.responseJSON.errors ){
+            if(response.responseJSON.errors[field_name]) {
+                let target = $('[name=' + field_name + ']');
+                target.addClass('is-invalid');
+                target.closest('.form-group')
+
+                    .find('.invalid-feedback')
+                    .removeClass('d-none')
+                    .find('strong').text(response.responseJSON.errors[field_name]);
+                [].forEach.call(document.querySelectorAll("input[type='file']"),
+                    function(input) {
+                        input = $(input);
+                        if(input.data('name') === field_name){
+                            input.addClass('is-invalid');
+                            input.closest('.custom-file')
+                                .find('.invalid-feedback')
+                                .removeClass('d-none')
+                                .find('strong').text(response.responseJSON.errors[field_name]);
+                        }
+                    });
+            }
+        }
+    }
+}
+
+function sendCode(mobile_field) {
+    Swal.fire({
+        title: 'در حال اجرای درخواست',
+        icon: 'info',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+    });
+    Swal.showLoading();
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/send/code',
+        dataType: 'json',
+        data: {
+            'mobile': mobile_field
+        },
+        success: function (response) {
+            hide_error_messages();
+            Swal.close();
+            alertify.success(response.message);
+            after_send_code();
+        },
+        error: function (response) {
+            show_error_messages(response);
+            Swal.close();
+            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+        }
+    });
+}
+
+// end helper functions
