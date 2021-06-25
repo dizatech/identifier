@@ -40,9 +40,18 @@ class LoginController extends Controller
             'code.integer' => 'کد وارد شده معتبر نیست.',
         ]);
         $result = NotifierLoginFacade::confirmSMS($request->mobile, $request->code);
+        if ($result->status == 200){
+            NotifierLoginFacade::attempLogin($result->user);
+            if ($result->user->is_admin == 1){
+                $url = route('panel');
+            }else{
+                $url = config('dizatech_identifier.login_redirect');
+            }
+        }
         return json_encode([
-            'status' => $result['status'],
-            'message' => $result['message']
+            'status' => $result->status,
+            'message' => $result->message,
+            'url' => $url
         ]);
     }
 }

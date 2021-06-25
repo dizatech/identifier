@@ -8,6 +8,7 @@ namespace Dizatech\Identifier\Facades;
  *
  * @method static array sendSMS()
  * @method static array confirmSMS()
+ * @method static array attempLogin()
  *
  * @see \Dizatech\Identifier\Repositories\NotifierLoginRepository
  */

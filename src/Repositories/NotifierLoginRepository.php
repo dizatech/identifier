@@ -34,14 +34,20 @@ class NotifierLoginRepository
         }
     }
 
+    public function attempLogin()
+    {
+        
+    }
+
     public function confirmSMS($mobile, $code)
     {
         $user = $this->createOrExistUser($mobile);
         $code_status = $this->checkIfOtpLogExpired($code,$user->mobile,$user);
         if ($code_status == 'not_expired'){
-            return [
+            return (object) [
                 'status' => 200,
-                'message' => 'ثبت نام باموفقیت انجام شد.'
+                'message' => 'ثبت نام باموفقیت انجام شد.',
+                'user' => $user
             ];
         }else{
             if ($code_status == 'not_valid'){
