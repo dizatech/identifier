@@ -49,6 +49,12 @@ $('.create_account').on('click', function (e) {
     slide_element('default_page', 'register_page');
 });
 
+$('.account_login').on('click', function (e) {
+    e.preventDefault();
+    page = 'login';
+    sendCode($('.username_input').val());
+});
+
 $('.code_step').on('click', function (e) {
     e.preventDefault();
     sendCode($('.register_mobile').val());
@@ -56,7 +62,7 @@ $('.code_step').on('click', function (e) {
 
 $('.confirm_sms_code').on('click', function (e) {
     e.preventDefault();
-    if ($('.register_mobile').val() == null){
+    if ($('.register_mobile').val() == ''){
         page = 'register';
         change_url('','','/auth/register');
         back_slide_element('code_page', 'register_page');
@@ -73,11 +79,16 @@ function after_send_code() {
             change_url('','','/auth/code');
             slide_element('register_page', 'code_page');
             break;
+        case 'login':
+            page = 'code';
+            change_url('','','/auth/code');
+            slide_element('default_page', 'code_page');
+            break;
     }
 }
 
-function after_confirm_code() {
-
+function after_confirm_code(url) {
+    window.location = url;
 }
 
 $('.back-btn').on('click', function (e) {
@@ -150,7 +161,6 @@ function show_error_messages(res){
                 let target = $('[name=' + field_name + ']');
                 target.addClass('is-invalid');
                 target.closest('.form-group')
-
                     .find('.invalid-feedback')
                     .removeClass('d-none')
                     .find('strong').text(response.responseJSON.errors[field_name]);
@@ -221,11 +231,10 @@ function confirmCode(mobile_field,code_field) {
         },
         success: function (response) {
             hide_error_messages();
-            Swal.close();
             if (response.status == 200){
-                alertify.success(response.message);
-                after_confirm_code();
+                after_confirm_code(response.url);
             }else {
+                Swal.close();
                 alertify.error(response.message);
             }
         },

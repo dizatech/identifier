@@ -34,9 +34,14 @@ class NotifierLoginRepository
         }
     }
 
-    public function attempLogin()
+    public function attempLogin($user)
     {
-        
+        if (Auth::loginUsingId($user->id)){
+            return [
+                'status' => 200,
+                'message' => "باموفقیت وارد شدید"
+            ];
+        }
     }
 
     public function confirmSMS($mobile, $code)
@@ -51,12 +56,12 @@ class NotifierLoginRepository
             ];
         }else{
             if ($code_status == 'not_valid'){
-                return [
+                return (object) [
                     'status' => 400,
                     'message' => 'کد وارد شده معتبر نیست.'
                 ];
             }else{
-                return [
+                return (object) [
                     'status' => 400,
                     'message' => 'کد وارد شده منقضی شده است.'
                 ];

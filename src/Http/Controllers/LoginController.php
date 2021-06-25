@@ -5,6 +5,7 @@ namespace Dizatech\Identifier\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Dizatech\Identifier\Facades\NotifierLoginFacade;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -39,6 +40,7 @@ class LoginController extends Controller
             'code.required' => 'فیلد کد تایید الزامی است.',
             'code.integer' => 'کد وارد شده معتبر نیست.',
         ]);
+        $url = '';
         $result = NotifierLoginFacade::confirmSMS($request->mobile, $request->code);
         if ($result->status == 200){
             NotifierLoginFacade::attempLogin($result->user);
@@ -53,5 +55,16 @@ class LoginController extends Controller
             'message' => $result->message,
             'url' => $url
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect()->route('home');
     }
 }

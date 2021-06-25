@@ -23,21 +23,21 @@
                                 <div class="col-md-12">
                                     <p>اگر در {{ config('dizatech_identifier.site_title') }} حساب کاربری دارید، وارد شوید:</p>
                                     <div class="form-group">
-                                        <div class="d-flex">
+                                        <div class="group d-flex">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text pl-3 pr-3" id="basic-addon1">
                                                     <i class="fa fa-user icon-size" aria-hidden="true"></i>
                                                 </span>
                                             </div>
-                                            <input type="text" class="form-control username-field" value=""
-                                                   name="username" id="username" placeholder="ایمیل یا موبایل یا نام کاربری">
-                                            <a class="btn btn-success float-left mr-2" href="/signup">
+                                            <input type="text" class="form-control username-field username_input" value=""
+                                                   name="mobile" id="username" placeholder="ایمیل یا موبایل یا نام کاربری">
+                                            <a class="btn btn-success float-left mr-2 account_login" href="#">
                                                 <span class="pl-4 pr-4">
                                                     ورود
                                                 </span>
                                             </a>
                                         </div>
-                                        <span class="invalid-feedback d-none">
+                                        <span class="invalid-feedback mt-4 d-none">
                                             <strong></strong>
                                         </span>
                                     </div>
@@ -92,7 +92,7 @@
                                     <div class="form-group">
                                         <div class="group d-flex">
                                             <input type="text" class="form-control username-field user_input_code" value=""
-                                                   name="confirm_code" placeholder="کد تایید">
+                                                   name="code" placeholder="کد تایید">
                                             <a class="btn btn-success confirm_sms_code float-left mr-2" href="#">
                                                 <span class="pl-4 pr-4">
                                                     تائید
