@@ -34,6 +34,30 @@ class NotifierLoginRepository
         }
     }
 
+    public function confirmSMS($mobile, $code)
+    {
+        $user = $this->createOrExistUser($mobile);
+        $code_status = $this->checkIfOtpLogExpired($code,$user->mobile,$user);
+        if ($code_status == 'not_expired'){
+            return [
+                'status' => 200,
+                'message' => 'ثبت نام باموفقیت انجام شد.'
+            ];
+        }else{
+            if ($code_status == 'not_valid'){
+                return [
+                    'status' => 400,
+                    'message' => 'کد وارد شده معتبر نیست.'
+                ];
+            }else{
+                return [
+                    'status' => 400,
+                    'message' => 'کد وارد شده منقضی شده است.'
+                ];
+            }
+        }
+    }
+
     protected function createOrExistUser($mobile)
     {
         $user_object = $this->user()::query()->where('mobile', '=', $mobile);
@@ -81,10 +105,14 @@ class NotifierLoginRepository
         ]);
     }
 
-    protected function checkIfOtpLogExpired($otp_code,$mobile)
+    protected function checkIfOtpLogExpired($otp_code,$mobile,$user)
     {
         $otp = $this->getOtpLog($otp_code,$mobile);
+        if (is_null($otp)){
+            return 'not_valid';
+        }
         if (Carbon::now() > $otp->expires_at){
+            $this->makeExpireLastOtpLog($user->id);
             return 'expired';
         }else{
             return 'not_expired';

@@ -83,7 +83,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="head-title">ثبت‌نام در {{ config('dizatech_identifier.site_title') }}</h4>
-                                    <div class="mb-2">
+                                    <div class="mb-4">
                                         <span class="mobile-code-text">
                                             <i class="sms-icon"></i>
                                             کد فرستاده شده برای ( 98912*****43 ) را وارد کنید
@@ -91,12 +91,12 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="group d-flex">
-                                            <input type="text" class="form-control username-field" value=""
+                                            <input type="text" class="form-control username-field user_input_code" value=""
                                                    name="confirm_code" placeholder="کد تایید">
-                                            <a class="btn btn-success float-left mr-2" href="#">
-                                            <span class="pl-4 pr-4">
-                                                تائید
-                                            </span>
+                                            <a class="btn btn-success confirm_sms_code float-left mr-2" href="#">
+                                                <span class="pl-4 pr-4">
+                                                    تائید
+                                                </span>
                                             </a>
                                         </div>
                                         <span class="invalid-feedback mt-4 d-none">

@@ -54,6 +54,18 @@ $('.code_step').on('click', function (e) {
     sendCode($('.register_mobile').val());
 });
 
+$('.confirm_sms_code').on('click', function (e) {
+    e.preventDefault();
+    if ($('.register_mobile').val() == null){
+        page = 'register';
+        change_url('','','/auth/register');
+        back_slide_element('code_page', 'register_page');
+        alertify.error('لطفا شماره موبایل خود را دوباره وارد کنید.');
+    }else {
+        confirmCode($('.register_mobile').val(),$('.user_input_code').val());
+    }
+});
+
 function after_send_code() {
     switch (page) {
         case 'register':
@@ -62,6 +74,10 @@ function after_send_code() {
             slide_element('register_page', 'code_page');
             break;
     }
+}
+
+function after_confirm_code() {
+
 }
 
 $('.back-btn').on('click', function (e) {
@@ -175,6 +191,40 @@ function sendCode(mobile_field) {
             if (response.status == 200){
                 alertify.success(response.message);
                 after_send_code();
+            }else {
+                alertify.error(response.message);
+            }
+        },
+        error: function (response) {
+            show_error_messages(response);
+            Swal.close();
+            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+        }
+    });
+}
+
+function confirmCode(mobile_field,code_field) {
+    Swal.fire({
+        title: 'در حال اجرای درخواست',
+        icon: 'info',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+    });
+    Swal.showLoading();
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/confirm/code',
+        dataType: 'json',
+        data: {
+            'mobile': mobile_field,
+            'code': code_field
+        },
+        success: function (response) {
+            hide_error_messages();
+            Swal.close();
+            if (response.status == 200){
+                alertify.success(response.message);
+                after_confirm_code();
             }else {
                 alertify.error(response.message);
             }

@@ -8,4 +8,5 @@ Route::group([
 ], function () {
     Route::get('/{page?}', 'LoginController@show')->name('identifier.login');
     Route::post('/send/code', 'LoginController@sendCode')->name('identifier.send.code');
+    Route::post('/confirm/code', 'LoginController@confirmCode')->name('identifier.confirm.code');
 });

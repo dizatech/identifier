@@ -28,4 +28,21 @@ class LoginController extends Controller
             'message' => $result['message']
         ]);
     }
+
+    public function confirmCode(Request $request)
+    {
+        $request->validate([
+            'mobile' => ['required', 'mobile'],
+            'code' => ['required', 'integer']
+        ],[
+            'mobile.required' => 'فیلد موبایل الزامی است.',
+            'code.required' => 'فیلد کد تایید الزامی است.',
+            'code.integer' => 'کد وارد شده معتبر نیست.',
+        ]);
+        $result = NotifierLoginFacade::confirmSMS($request->mobile, $request->code);
+        return json_encode([
+            'status' => $result['status'],
+            'message' => $result['message']
+        ]);
+    }
 }
