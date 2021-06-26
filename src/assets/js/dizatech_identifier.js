@@ -84,9 +84,9 @@ $('.confirm_sms_code').on('click', function (e) {
 
 $('.otp_timer').on('click', function (e) {
     e.preventDefault();
-    let mobile_num = $('.username_input').val();
-    $('.mobile_num').html('(' + mobile_num + ')');
-    sendCode(mobile_num);
+    url = window.location.href.replace(/\/$/, '');
+    register_mobile = url.substring(url.lastIndexOf('/') + 1);
+    sendCode(register_mobile);
 });
 
 $('.create_new_account').on('click', function (e) {
@@ -327,8 +327,9 @@ function checkUser(mobile_field) {
 //start timer
 function send_otp(target) {
     target.prop("disabled",true);
-    var min=0;
-    var sec=4;
+    var min=2;
+    var sec=0;
+    target.find('.otp_timer_text').html('<span class="minutes">2</span>' + ':' + '<span class="seconds">0</span>');
     start_count_down(min,sec,target);
 }
 
