@@ -6,8 +6,8 @@ Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web']
 ], function () {
-    Route::get('/{page?}', 'LoginController@show')->name('identifier.login')->middleware('guest');
-    Route::post('/send/code', 'LoginController@sendCode')->name('identifier.send.code')->middleware('guest');
-    Route::post('/confirm/code', 'LoginController@confirmCode')->name('identifier.confirm.code')->middleware('guest');
+    Route::get('/{page?}/{mobile?}', 'LoginController@show')->name('identifier.login')->middleware('guest');
+    Route::post('/send/code/{mobile}', 'LoginController@sendCode')->name('identifier.send.code')->middleware('guest');
+    Route::post('/confirm/code/{mobile}', 'LoginController@confirmCode')->name('identifier.confirm.code')->middleware('guest');
     Route::post('/logout', 'LoginController@logout')->name('identifier.logout');
 });

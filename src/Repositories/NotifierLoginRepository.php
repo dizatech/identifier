@@ -122,7 +122,7 @@ class NotifierLoginRepository
         if (is_null($otp)){
             return 'not_valid';
         }
-        if (Carbon::now() > $otp->expires_at){
+        if (Carbon::now()->toDateTimeString() > $otp->expires_at){
             $this->makeExpireLastOtpLog($user->id);
             return 'expired';
         }else{
@@ -140,8 +140,7 @@ class NotifierLoginRepository
                 return 'not_expired';
             }
         }else{
-
-            return 'not_expired';
+            return 'expired';
         }
     }
 

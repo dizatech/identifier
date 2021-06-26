@@ -86,7 +86,7 @@
                                     <div class="mb-4">
                                         <span class="mobile-code-text">
                                             <i class="sms-icon"></i>
-                                            کد فرستاده شده برای ( 98912*****43 ) را وارد کنید
+                                            کد فرستاده شده برای  <span class="mobile_num">({{ request('mobile') }})</span>  را وارد کنید
                                         </span>
                                     </div>
                                     <div class="form-group">

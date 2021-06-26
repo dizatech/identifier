@@ -36,6 +36,9 @@ function set_page() {
             || page_type === 'forgot'){
             page = page_type;
         }
+        if(page_type.length === 11){
+            page = 'code';
+        }
     }
 }
 
@@ -57,32 +60,31 @@ $('.account_login').on('click', function (e) {
 
 $('.code_step').on('click', function (e) {
     e.preventDefault();
-    sendCode($('.register_mobile').val());
+    let mobile_num = $('.register_mobile').val();
+    $('.mobile_num').html('(' + mobile_num + ')');
+    sendCode(mobile_num);
 });
 
 $('.confirm_sms_code').on('click', function (e) {
+    let register_mobile = $('.register_mobile').val();
     e.preventDefault();
-    if ($('.register_mobile').val() == ''){
-        page = 'register';
-        change_url('','','/auth/register');
-        back_slide_element('code_page', 'register_page');
-        alertify.error('لطفا شماره موبایل خود را دوباره وارد کنید.');
-    }else {
-        confirmCode($('.register_mobile').val(),$('.user_input_code').val());
+    if (register_mobile == ''){
+        register_mobile = url.substring(url.lastIndexOf('/') + 1);
     }
+    confirmCode(register_mobile,$('.user_input_code').val());
 });
 
-function after_send_code() {
+function after_send_code(mobile) {
     switch (page) {
         case 'register':
             page = 'code';
-            change_url('','','/auth/code');
+            change_url('','','/auth/code/' + mobile);
             slide_element('register_page', 'code_page');
             break;
         case 'login':
-            page = 'code';
-            change_url('','','/auth/code');
-            slide_element('default_page', 'code_page');
+            //page = 'code';
+            //change_url('','','/auth/code' + mobile);
+            //slide_element('default_page', 'code_page');
             break;
     }
 }
@@ -181,6 +183,9 @@ function show_error_messages(res){
 }
 
 function sendCode(mobile_field) {
+    if (mobile_field == ''){
+        mobile_field = null;
+    }
     Swal.fire({
         title: 'در حال اجرای درخواست',
         icon: 'info',
@@ -190,7 +195,7 @@ function sendCode(mobile_field) {
     Swal.showLoading();
     $.ajax({
         type: "post",
-        url: baseUrl + '/auth/send/code',
+        url: baseUrl + '/auth/send/code/' + mobile_field,
         dataType: 'json',
         data: {
             'mobile': mobile_field
@@ -200,7 +205,7 @@ function sendCode(mobile_field) {
             Swal.close();
             if (response.status == 200){
                 alertify.success(response.message);
-                after_send_code();
+                after_send_code(mobile_field);
             }else {
                 alertify.error(response.message);
             }
@@ -223,7 +228,7 @@ function confirmCode(mobile_field,code_field) {
     Swal.showLoading();
     $.ajax({
         type: "post",
-        url: baseUrl + '/auth/confirm/code',
+        url: baseUrl + '/auth/confirm/code/' + mobile_field,
         dataType: 'json',
         data: {
             'mobile': mobile_field,

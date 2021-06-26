@@ -6,6 +6,12 @@ return [
     // full url of terms page (this will be used in register page)
     'terms_url' => 'http://localhost:8000/',
 
+    // admin login redirect route name
+    'admin_login_redirect' => 'panel',
+
+    // user login redirect route name
+    'user_login_redirect' => 'home',
+
     // where did you required the dizatech_identifier.scss file ?
     // this file must be included in webpack.js as well
     'css_public_path' => 'css/auth.css',

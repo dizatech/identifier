@@ -16,8 +16,11 @@ class LoginController extends Controller
         ]);
     }
 
-    public function sendCode(Request $request)
+    public function sendCode(Request $request, $mobile)
     {
+        if (is_null($request->mobile)){
+            $request->mobile = $mobile;
+        }
         $request->validate([
             'mobile' => ['required', 'mobile']
         ],[
@@ -30,24 +33,26 @@ class LoginController extends Controller
         ]);
     }
 
-    public function confirmCode(Request $request)
+    public function confirmCode(Request $request, $mobile)
     {
+        if (is_null($request->mobile)){
+            $request->mobile = $mobile;
+        }
         $request->validate([
             'mobile' => ['required', 'mobile'],
-            'code' => ['required', 'integer']
+            'code' => ['required']
         ],[
             'mobile.required' => 'فیلد موبایل الزامی است.',
-            'code.required' => 'فیلد کد تایید الزامی است.',
-            'code.integer' => 'کد وارد شده معتبر نیست.',
+            'code.required' => 'فیلد کد تایید الزامی است.'
         ]);
         $url = '';
         $result = NotifierLoginFacade::confirmSMS($request->mobile, $request->code);
         if ($result->status == 200){
             NotifierLoginFacade::attempLogin($result->user);
             if ($result->user->is_admin == 1){
-                $url = route('panel');
+                $url = route(config('dizatech_identifier.admin_login_redirect'));
             }else{
-                $url = config('dizatech_identifier.login_redirect');
+                $url = route(config('dizatech_identifier.user_login_redirect'));
             }
         }
         return json_encode([
