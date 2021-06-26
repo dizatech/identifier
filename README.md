@@ -13,25 +13,19 @@ Laravel Identifier Package :: simple authentication (login, register and forgot-
 #### <g-emoji class="g-emoji" alias="arrow_down" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2b07.png">⬇️</g-emoji> Installation
 
 ```bash
-
 composer require dizatech/identifier
-
 ```
 
 #### Publish Config file
 
 ```
-
 php artisan vendor:publish --tag=dizatech_identifier
-
 ```
 
 #### Migrate tables, to add identifier tables to database
 
-```php
-
+```bash
 php artisan migrate
-
 ```
 
 #### <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> How to change auth options
