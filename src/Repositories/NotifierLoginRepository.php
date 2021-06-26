@@ -176,4 +176,14 @@ class NotifierLoginRepository
         $diff_in_sec = Carbon::parse(Carbon::now()->toDateTimeString())->diffInSeconds($otp->expires_at);
         return gmdate('i:s', $diff_in_sec) . ' ثانیه';
     }
+
+    public function checkMobileExist($mobile)
+    {
+        $user_object = $this->user()::query()->where('mobile', '=', $mobile);
+        if ($user_object->count() > 0){
+            return 'registered';
+        }else{
+            return 'not_registered';
+        }
+    }
 }

@@ -78,11 +78,12 @@
                             </div>
                         </div>
                     @break
+                    @case('login')
                     @case('code')
                         <div class="segment">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4 class="head-title">ثبت‌نام در {{ config('dizatech_identifier.site_title') }}</h4>
+                                    <h4 class="head-title">{{ $page == 'code' ? ' ثبت‌نام در' : 'ورود به ' . config('dizatech_identifier.site_title') }}</h4>
                                     <div class="mb-4">
                                         <span class="mobile-code-text">
                                             <i class="sms-icon"></i>
@@ -91,10 +92,17 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="group d-flex">
-                                            <input type="text" class="form-control username-field user_input_code" value=""
+                                            <input type="text" class="form-control username-field @if($page == 'code') 'user_input_code' @elseif($page == 'login') login_input_code @endif" value=""
                                                    name="code" placeholder="کد تایید">
+                                            <button class='btn btn-info float-right text-center mr-2 otp_timer' disabled>
+                                                <span class='d-flex justfy-content-between align-items-center flex-row-reverse otp_timer_text'>
+                                                    <span class="minutes">2</span>
+                                                    :
+                                                    <span class="seconds">0</span>
+                                                </span>
+                                            </button>
                                             <a class="btn btn-success confirm_sms_code float-left mr-2" href="#">
-                                                <span class="pl-4 pr-4">
+                                                <span>
                                                     تائید
                                                 </span>
                                             </a>
@@ -105,6 +113,29 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    @break
+                    @case('not_registered')
+                        <div class="segment">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="head-title">
+                                        <span>
+                                            شماره موبایل <span class="mobile_num">{{ request('mobile') }}</span> در {{ config('dizatech_identifier.site_title') }} ثبت نشده
+                                        </span>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="segment">
+                            <a href="#">
+                                ساخت حساب کاربری جدید با <span class="mobile_num">{{ request('mobile') }}</span>
+                            </a>
+                        </div>
+                        <div class="segment">
+                            <a href="#">
+                                حساب کاربری دارم ولی اطلاعات آن را فراموش کردم
+                            </a>
                         </div>
                     @break
                 @endswitch

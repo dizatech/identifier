@@ -62,6 +62,19 @@ class LoginController extends Controller
         ]);
     }
 
+    public function checkMobile(Request $request)
+    {
+        $request->validate([
+            'mobile' => ['required', 'mobile']
+        ],[
+            'mobile.required' => 'فیلد موبایل الزامی است.'
+        ]);
+        $result = NotifierLoginFacade::checkMobileExist($request->mobile);
+        return json_encode([
+            'type' => $result,
+        ]);
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();
