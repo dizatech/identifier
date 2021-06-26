@@ -156,3 +156,21 @@ body {
 .otp_timer_text{
     width: max-content;
 }
+
+.mobile_number{
+    font-weight: bold;
+    color: rgb(206, 21, 23);
+    font-size: 16px;
+}
+
+.segment-colored{
+    background-color: rgb(242, 242, 242);
+}
+
+.not_registered_button{
+    text-decoration: none;
+}
+
+.not_registered_button:hover{
+    text-decoration: none;
+}

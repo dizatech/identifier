@@ -70,14 +70,13 @@ $('.confirm_sms_code').on('click', function (e) {
     let register_mobile = '';
     let register_code = '';
     if (page === 'login'){
-        register_mobile = $('.username_input').val();
         register_code = $('.login_input_code').val();
-    }else if(page === 'code') {
-        register_mobile = $('.register_mobile').val();
+    }else if(page === 'code' || page === 'not_registered') {
         register_code = $('.user_input_code').val();
     }
     e.preventDefault();
     if (register_mobile == ''){
+        url = window.location.href.replace(/\/$/, '');
         register_mobile = url.substring(url.lastIndexOf('/') + 1);
     }
     confirmCode(register_mobile,register_code);
@@ -88,6 +87,12 @@ $('.otp_timer').on('click', function (e) {
     let mobile_num = $('.username_input').val();
     $('.mobile_num').html('(' + mobile_num + ')');
     sendCode(mobile_num);
+});
+
+$('.create_new_account').on('click', function (e) {
+    e.preventDefault();
+    let mobile_num = $('.not_registered_mobile').val();
+    sendCode(mobile_num, 'not_registered');
 });
 
 function after_send_code(mobile, set_page = null) {
@@ -104,6 +109,11 @@ function after_send_code(mobile, set_page = null) {
             page = 'login';
             change_url('','','/auth/code/' + mobile);
             slide_element('default_page', 'login_page');
+            break;
+        case "not_registered":
+            page = 'not_registered';
+            change_url('','','/auth/code/' + mobile);
+            slide_element('not_registered_page', 'code_page');
             break;
     }
 }
@@ -295,13 +305,14 @@ function checkUser(mobile_field) {
             hide_error_messages();
             Swal.close();
             if (response.type === 'not_registered'){
+                $('.mobile_num').html(mobile_field);
+                $('.not_registered_mobile').val(mobile_field);
                 page = 'not_registered';
                 change_url('','','/auth/not_registered');
                 slide_element('default_page', 'not_registered_page');
             }else {
-                let mobile_num = $('.username_input').val();
-                $('.mobile_num').html('(' + mobile_num + ')');
-                sendCode(mobile_num, 'login');
+                $('.mobile_num').html('(' + mobile_field + ')');
+                sendCode(mobile_field, 'login');
             }
         },
         error: function (response) {

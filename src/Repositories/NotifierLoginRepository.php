@@ -5,7 +5,6 @@ namespace Dizatech\Identifier\Repositories;
 
 use Carbon\Carbon;
 use Dizatech\Identifier\Models\NotifierOtpCode;
-use http\Client\Curl\User;
 use Illuminate\Support\Facades\Auth;
 
 class NotifierLoginRepository
@@ -44,11 +43,21 @@ class NotifierLoginRepository
         }
     }
 
+    protected function verifyUser($user)
+    {
+        if ($user->email_verified_at == null){
+            $this->user()->where('id', $user->id)->update([
+                'email_verified_at' => Carbon::now()->toDateTimeString()
+            ]);
+        }
+    }
+
     public function confirmSMS($mobile, $code)
     {
         $user = $this->createOrExistUser($mobile);
         $code_status = $this->checkIfOtpLogExpired($code,$user->mobile,$user);
         if ($code_status == 'not_expired'){
+            $this->verifyUser($user);
             return (object) [
                 'status' => 200,
                 'message' => 'ثبت نام باموفقیت انجام شد.',
@@ -179,7 +188,8 @@ class NotifierLoginRepository
 
     public function checkMobileExist($mobile)
     {
-        $user_object = $this->user()::query()->where('mobile', '=', $mobile);
+        $user_object = $this->user()::query()
+            ->where('mobile', '=', $mobile)->where('email_verified_at', '!=', null);
         if ($user_object->count() > 0){
             return 'registered';
         }else{

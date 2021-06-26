@@ -92,7 +92,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="group d-flex">
-                                            <input type="text" class="form-control username-field @if($page == 'code') 'user_input_code' @elseif($page == 'login') login_input_code @endif" value=""
+                                            <input type="text" class="form-control username-field @if($page == 'code') user_input_code @elseif($page == 'login') login_input_code @elseif($page == 'not_registered') not_registered_input_code @endif" value=""
                                                    name="code" placeholder="کد تایید">
                                             <button class='btn btn-info float-right text-center mr-2 otp_timer' disabled>
                                                 <span class='d-flex justfy-content-between align-items-center flex-row-reverse otp_timer_text'>
@@ -116,24 +116,25 @@
                         </div>
                     @break
                     @case('not_registered')
-                        <div class="segment">
+                        <div class="segment segment-colored">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4 class="head-title">
-                                        <span>
-                                            شماره موبایل <span class="mobile_num">{{ request('mobile') }}</span> در {{ config('dizatech_identifier.site_title') }} ثبت نشده
+                                    <h4 class="head-title text-center mb-0">
+                                        <span class="mobile_number">
+                                            شماره موبایل <span class="mobile_num"></span> در {{ config('dizatech_identifier.site_title') }} ثبت نشده
                                         </span>
                                     </h4>
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" name="not_registered_mobile" class="not_registered_mobile" value="">
                         <div class="segment">
-                            <a href="#">
-                                ساخت حساب کاربری جدید با <span class="mobile_num">{{ request('mobile') }}</span>
+                            <a href="#" class="not_registered_button create_new_account">
+                                ساخت حساب کاربری جدید با <span class="mobile_num"></span>
                             </a>
                         </div>
                         <div class="segment">
-                            <a href="#">
+                            <a href="#" class="not_registered_button forgot_my_info">
                                 حساب کاربری دارم ولی اطلاعات آن را فراموش کردم
                             </a>
                         </div>
