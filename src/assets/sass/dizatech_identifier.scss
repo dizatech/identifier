@@ -174,3 +174,15 @@ body {
 .not_registered_button:hover{
     text-decoration: none;
 }
+
+.loading_overlay{
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($white,.8);
+    z-index: 99;
+    position: absolute;
+}

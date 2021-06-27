@@ -18,75 +18,115 @@ require('lity/dist/lity.min');
 
 require('jquery-ui/ui/effects/effect-slide');
 
-// start init pages
-
-var url = window.location.href.replace(/\/$/, '');
-var page_type = '';
-var page = 'default';
-
 $(function () {
-    set_page();
-});
-
-function set_page() {
+    var url = window.location.href.replace(/\/$/, '');
     page_type = url.substring(url.lastIndexOf('/') + 1);
     if (typeof page_type != 'undefined'){
-        if (page_type === 'default' || page_type === 'register'
-            || page_type === 'code' || page_type === 'login'
-            || page_type === 'forgot' || page_type === 'login_code'
-            || page_type === 'not_registered'){
-            page = page_type;
-        }
-        if(page_type.length === 11){
+        if(page_type === 'code'){
             send_otp($('.otp_timer'));
-            page = 'code';
         }
     }
-}
-
-// end init pages
+});
 
 // login and register handler
 $('.create_account').on('click', function (e) {
     e.preventDefault();
-    page = 'register';
+    startLoading();
+    setGroupCookies({'notifier_current_page': 'register', 'notifier_previous_page': 'default'});
     change_url('','','/auth/register');
-    slide_element('default_page', 'register_page');
+    slide_element('default', 'register');
 });
 
 $('.account_login').on('click', function (e) {
     e.preventDefault();
-    checkUser($('.username_input').val());
+    setCookie('notifier_username', $('.username_input').val());
+    checkUser();
 });
 
 $('.code_step').on('click', function (e) {
     e.preventDefault();
+    startLoading();
     let mobile_num = $('.register_mobile').val();
-    $('.mobile_num').html('(' + mobile_num + ')');
     sendCode(mobile_num);
+    let sendSms = setInterval(function () {
+        if (code_result != '') {
+            clearInterval(sendSms);
+            if (code_result.status === 200){
+                send_otp($('.otp_timer'));
+                alertify.success(code_result.message);
+                $('.mobile_num').html('(' + mobile_num + ')');
+                setGroupCookies({
+                    'notifier_username': mobile_num,
+                    'notifier_current_page': 'code',
+                    'notifier_previous_page': 'register'
+                });
+                change_url('','','/auth/code');
+                slide_element('register', 'code');
+            }else {
+                alertify.error(code_result.message);
+            }
+        }
+    },50);
 });
 
 $('.confirm_sms_code').on('click', function (e) {
-    let register_mobile = '';
-    let register_code = '';
-    if (page === 'login'){
-        register_code = $('.login_input_code').val();
-    }else if(page === 'code' || page === 'not_registered') {
-        register_code = $('.user_input_code').val();
-    }
     e.preventDefault();
-    if (register_mobile == ''){
-        url = window.location.href.replace(/\/$/, '');
-        register_mobile = url.substring(url.lastIndexOf('/') + 1);
-    }
-    confirmCode(register_mobile,register_code);
+    startLoading();
+    var register_mobile = '';
+    getCookie('notifier_username');
+    let getCookieByName = setInterval(function () {
+        if (cookie_value != '') {
+            clearInterval(getCookieByName);
+            register_mobile = cookie_value;
+            var register_code = $('.user_input_code').val();
+            $.ajax({
+                type: "post",
+                url: baseUrl + '/auth/confirm/code',
+                dataType: 'json',
+                data: {
+                    'mobile': register_mobile,
+                    'code': register_code
+                },
+                success: function (response) {
+                    hide_error_messages();
+                    if (response.status == 200){
+                        window.location = response.url;
+                    }else {
+                        stopLoading();
+                        alertify.error(response.message);
+                    }
+                },
+                error: function (response) {
+                    stopLoading();
+                    show_error_messages(response);
+                    alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+                }
+            });
+        }
+    }, 50);
 });
 
 $('.otp_timer').on('click', function (e) {
     e.preventDefault();
-    url = window.location.href.replace(/\/$/, '');
-    register_mobile = url.substring(url.lastIndexOf('/') + 1);
-    sendCode(register_mobile);
+    startLoading();
+    getCookie('notifier_username');
+    let getCookieByName = setInterval(function () {
+        if (cookie_value != '') {
+            clearInterval(getCookieByName);
+            sendCode(cookie_value);
+        }
+    }, 50);
+    let sendOtpSms = setInterval(function () {
+        if (code_result != '') {
+            clearInterval(sendOtpSms);
+            if (code_result.status === 200){
+                alertify.success(code_result.message);
+                stopLoading();
+            }else {
+                alertify.error(code_result.message);
+            }
+        }
+    },50);
 });
 
 $('.create_new_account').on('click', function (e) {
@@ -95,66 +135,23 @@ $('.create_new_account').on('click', function (e) {
     sendCode(mobile_num, 'not_registered');
 });
 
-function after_send_code(mobile, set_page = null) {
-    if (set_page != null){
-        page = set_page;
-    }
-    switch (page) {
-        case 'register':
-            page = 'code';
-            change_url('','','/auth/code/' + mobile);
-            slide_element('register_page', 'code_page');
-            break;
-        case 'login':
-            page = 'login';
-            change_url('','','/auth/code/' + mobile);
-            slide_element('default_page', 'login_page');
-            break;
-        case "not_registered":
-            page = 'not_registered';
-            change_url('','','/auth/code/' + mobile);
-            slide_element('not_registered_page', 'code_page');
-            break;
-    }
-}
-
-function after_confirm_code(url) {
-    window.location = url;
-}
-
 $('.back-btn').on('click', function (e) {
     e.preventDefault();
-    switch (page) {
-        case 'register':
-            page = 'default';
-            change_url('','','/auth/default');
-            back_slide_element('register_page', 'default_page');
-        break;
-        case 'not_registered':
-            page = 'default';
-            change_url('','','/auth/default');
-            back_slide_element('not_registered_page', 'default_page');
-        break;
-        case 'code':
-            page = 'register';
-            change_url('','','/auth/register');
-            back_slide_element('code_page', 'register_page');
-        break;
-        case 'login':
-            page = 'default';
-            change_url('','','/auth/default');
-            back_slide_element('login_page', 'default_page');
-        break;
-        case 'forgot':
-            page = 'default';
-            change_url('','','/auth/default');
-            back_slide_element('forgot_page', 'default_page');
-        break;
-        default:
-            window.location = '/';
-    }
+    startLoading();
+    getGroupCookies(['notifier_current_page','notifier_previous_page']);
+    let groupCookies = setInterval(function () {
+        if (cookiesResult != ''){
+            clearInterval(groupCookies);
+            if (cookiesResult.notifier_current_page == 'default') {
+                window.location = '/';
+            }else {
+                change_url('', '', cookiesResult.notifier_previous_page);
+                setCookie('notifier_previous_page', cookiesResult.notifier_current_page);
+                back_slide_element(cookiesResult.notifier_current_page, cookiesResult.notifier_previous_page);
+            }
+        }
+    }, 50);
 });
-
 // start helper functions
 
 function slide_element(hide,show) {
@@ -216,84 +213,31 @@ function show_error_messages(res){
     }
 }
 
-function sendCode(mobile_field, page = null) {
-    if (mobile_field == ''){
-        mobile_field = null;
-    }
-    Swal.fire({
-        title: 'در حال اجرای درخواست',
-        icon: 'info',
-        allowEscapeKey: false,
-        allowOutsideClick: false,
-    });
-    Swal.showLoading();
+var code_result = '';
+function sendCode(mobile_field) {
+    code_result = '';
     $.ajax({
         type: "post",
-        url: baseUrl + '/auth/send/code/' + mobile_field,
+        url: baseUrl + '/auth/send/code',
         dataType: 'json',
         data: {
             'mobile': mobile_field
         },
         success: function (response) {
             hide_error_messages();
-            Swal.close();
-            if (response.status == 200){
-                send_otp($('.otp_timer'));
-                alertify.success(response.message);
-                after_send_code(mobile_field, page);
-            }else {
-                alertify.error(response.message);
-            }
+            code_result = response;
+            stopLoading();
         },
         error: function (response) {
+            stopLoading();
             show_error_messages(response);
-            Swal.close();
             alertify.error('لطفا خطاهای فرم را بررسی کنید.');
         }
     });
 }
 
-function confirmCode(mobile_field,code_field) {
-    Swal.fire({
-        title: 'در حال اجرای درخواست',
-        icon: 'info',
-        allowEscapeKey: false,
-        allowOutsideClick: false,
-    });
-    Swal.showLoading();
-    $.ajax({
-        type: "post",
-        url: baseUrl + '/auth/confirm/code/' + mobile_field,
-        dataType: 'json',
-        data: {
-            'mobile': mobile_field,
-            'code': code_field
-        },
-        success: function (response) {
-            hide_error_messages();
-            if (response.status == 200){
-                after_confirm_code(response.url);
-            }else {
-                Swal.close();
-                alertify.error(response.message);
-            }
-        },
-        error: function (response) {
-            show_error_messages(response);
-            Swal.close();
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
-        }
-    });
-}
-
-function checkUser(mobile_field) {
-    Swal.fire({
-        title: 'در حال اجرای درخواست',
-        icon: 'info',
-        allowEscapeKey: false,
-        allowOutsideClick: false,
-    });
-    Swal.showLoading();
+function checkUser() {
+    var mobile_field = getCookie('notifier_username');
     $.ajax({
         type: "post",
         url: baseUrl + '/auth/check/mobile',
@@ -309,7 +253,7 @@ function checkUser(mobile_field) {
                 $('.not_registered_mobile').val(mobile_field);
                 page = 'not_registered';
                 change_url('','','/auth/not_registered');
-                slide_element('default_page', 'not_registered_page');
+                slide_element('default', 'not_registered');
             }else {
                 $('.mobile_num').html('(' + mobile_field + ')');
                 sendCode(mobile_field, 'login');
@@ -317,10 +261,95 @@ function checkUser(mobile_field) {
         },
         error: function (response) {
             show_error_messages(response);
-            Swal.close();
             alertify.error('لطفا خطاهای فرم را بررسی کنید.');
         }
     });
+}
+
+function setCookie(cookieName,cookieValue) {
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/set/cookie',
+        dataType: 'json',
+        data: {
+            'cookie_name': cookieName,
+            'cookie_value': cookieValue
+        },
+        success: function () {
+            stopLoading();
+        }
+    });
+}
+
+function setGroupCookies(cookies_array) {
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/set/group/cookies',
+        dataType: 'json',
+        data: {
+            're_cookies': cookies_array
+        },
+        success: function () {
+            stopLoading();
+        }
+    });
+}
+
+var cookie_value = '';
+function getCookie(cookieName) {
+    cookie_value = '';
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/get/cookie',
+        dataType: 'json',
+        data: {
+            'cookie_name': cookieName
+        },
+        success: function (response) {
+            cookie_value = response.cookie;
+        }
+    });
+}
+
+var cookiesResult = '';
+function getGroupCookies(cookieNames) {
+    cookiesResult = '';
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/get/group/cookies',
+        dataType: 'json',
+        data: {
+            'cookie_names': cookieNames
+        },
+        success: function (response) {
+            cookiesResult = response.cookies;
+            stopLoading();
+        }
+    });
+}
+
+function forgetCookie(cookieName) {
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/forget/cookie',
+        dataType: 'json',
+        data: {
+            'cookie_name': cookieName
+        },
+        success: function () {
+            stopLoading();
+        }
+    });
+}
+
+function startLoading() {
+    $('.loading_overlay').removeClass('d-none');
+    $('.loading_overlay').addClass('d-flex');
+}
+
+function stopLoading() {
+    $('.loading_overlay').removeClass('d-flex');
+    $('.loading_overlay').addClass('d-none');
 }
 // end helper functions
 

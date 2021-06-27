@@ -83,11 +83,11 @@
                         <div class="segment">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4 class="head-title">{{ $page == 'code' ? ' ثبت‌نام در' : 'ورود به ' . config('dizatech_identifier.site_title') }}</h4>
+                                    <h4 class="head-title">{{ $page == 'code' ? ' ثبت‌نام در' : 'ورود به ' }} {{ config('dizatech_identifier.site_title') }}</h4>
                                     <div class="mb-4">
                                         <span class="mobile-code-text">
                                             <i class="sms-icon"></i>
-                                            کد فرستاده شده برای  <span class="mobile_num">({{ request('mobile') }})</span>  را وارد کنید
+                                            کد فرستاده شده برای  <span class="mobile_num">({{ request()->cookie('notifier_username') }})</span>  را وارد کنید
                                         </span>
                                     </div>
                                     <div class="form-group">

@@ -11,16 +11,16 @@ class LoginController extends Controller
 {
     public function show($page = 'default')
     {
+        if ($page != 'default' && is_null(\request()->cookie('notifier_username'))){
+            return redirect(route('identifier.login'));
+        }
         return view('vendor.dizatech-identifier.identifier', [
             'page' => $page
         ]);
     }
 
-    public function sendCode(Request $request, $mobile)
+    public function sendCode(Request $request)
     {
-        if (is_null($request->mobile)){
-            $request->mobile = $mobile;
-        }
         $request->validate([
             'mobile' => ['required', 'mobile']
         ],[
@@ -33,11 +33,8 @@ class LoginController extends Controller
         ]);
     }
 
-    public function confirmCode(Request $request, $mobile)
+    public function confirmCode(Request $request)
     {
-        if (is_null($request->mobile)){
-            $request->mobile = $mobile;
-        }
         $request->validate([
             'mobile' => ['required', 'mobile'],
             'code' => ['required']
@@ -84,5 +81,62 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home');
+    }
+
+    public function setCookie(Request $request){
+        $request->validate([
+            'cookie_name' => ['required','string'],
+            'cookie_value' => ['required','string'],
+        ]);
+        return response()
+            ->json(['success' => true], 200)
+            ->withCookie(cookie($request->cookie_name, $request->cookie_value, 30));
+    }
+
+    public function setCookies(Request $request){
+        $request->validate([
+            're_cookies' => ['required','array']
+        ]);
+        $cookies = array();
+        foreach ($request->re_cookies as $key => $value){
+            \Cookie::queue($key, $value, 30);
+        }
+        return json_encode([
+            'status' => 200
+        ]);
+    }
+
+    public function getCookie(Request $request){
+        $request->validate([
+            'cookie_name' => ['required','string']
+        ]);
+        $value = $request->cookie($request->cookie_name);
+        return json_encode([
+            'cookie' => $value
+        ]);
+    }
+
+    public function getCookies(Request $request){
+        $request->validate([
+            'cookie_names' => ['required','array']
+        ]);
+        $cookies = [];
+        foreach ($request->cookie_names as $cookie_name){
+            $cookies[$cookie_name] = $request->cookie($cookie_name);
+        }
+        return json_encode([
+            'cookies' => $cookies
+        ]);
+    }
+
+    public function forgetCookie()
+    {
+        $request->validate([
+            'cookie_name' => ['required','string']
+        ]);
+        \Cookie::forget($request->cookie_name);
+        return json_encode([
+            'status' => 200
+        ]);
     }
 }

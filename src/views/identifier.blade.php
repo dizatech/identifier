@@ -23,23 +23,33 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 mx-auto main-container">
+                <div class="loading_overlay justify-content-center align-items-center d-none">
+                    <div class="text-center loading_content">
+                        <div class="spinner-border text-danger" role="status">
+                            <span class="sr-only"></span>
+                        </div>
+                        <div class="mt-2 text-danger">
+                            لطفا منتظر بمانید...
+                        </div>
+                    </div>
+                </div>
                 <a href="#" class="back-btn">بازگشت</a>
-                <div class="card default_page" style="display:@if($page == 'default') block @else none @endif">
+                <div class="card default" style="display:@if($page == 'default') block @else none @endif">
                     <x-login-component page="default"></x-login-component>
                 </div>
-                <div class="card register_page" style="display:@if($page == 'register') block @else none @endif">
+                <div class="card register" style="display:@if($page == 'register') block @else none @endif">
                     <x-login-component page="register"></x-login-component>
                 </div>
-                <div class="card code_page" style="display:@if($page == 'code') block @else none @endif">
+                <div class="card code" style="display:@if($page == 'code') block @else none @endif">
                     <x-login-component page="code"></x-login-component>
                 </div>
-                <div class="card login_page" style="display:@if($page == 'login') block @else none @endif">
+                <div class="card login" style="display:@if($page == 'login') block @else none @endif">
                     <x-login-component page="login"></x-login-component>
                 </div>
-                <div class="card not_registered_page" style="display:@if($page == 'not_registered') block @else none @endif">
+                <div class="card not_registered" style="display:@if($page == 'not_registered') block @else none @endif">
                     <x-login-component page="not_registered"></x-login-component>
                 </div>
-                <div class="card forgot_page" style="display:@if($page == 'forgot') block @else none @endif">
+                <div class="card forgot" style="display:@if($page == 'forgot') block @else none @endif">
                     <x-login-component page="forgot"></x-login-component>
                 </div>
             </div>

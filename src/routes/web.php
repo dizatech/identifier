@@ -6,9 +6,15 @@ Route::group([
     'prefix'     => 'auth',
     'middleware' => ['web']
 ], function () {
-    Route::get('/{page?}/{mobile?}', 'LoginController@show')->name('identifier.login')->middleware('guest');
-    Route::post('/send/code/{mobile}', 'LoginController@sendCode')->name('identifier.send.code')->middleware('guest');
-    Route::post('/confirm/code/{mobile}', 'LoginController@confirmCode')->name('identifier.confirm.code')->middleware('guest');
+    Route::get('/{page?}', 'LoginController@show')->name('identifier.login')->middleware('guest');
+    Route::post('/send/code', 'LoginController@sendCode')->name('identifier.send.code')->middleware('guest');
+    Route::post('/confirm/code', 'LoginController@confirmCode')->name('identifier.confirm.code')->middleware('guest');
     Route::post('/check/mobile', 'LoginController@checkMobile')->name('identifier.check.mobile')->middleware('guest');
     Route::post('/logout', 'LoginController@logout')->name('identifier.logout');
+
+    Route::post('/set/cookie', 'LoginController@setCookie')->name('identifier.set.cookie')->middleware('guest');
+    Route::post('/set/group/cookies', 'LoginController@setCookies')->name('identifier.set.group.cookies')->middleware('guest');
+    Route::post('/get/cookie', 'LoginController@getCookie')->name('identifier.get.cookie')->middleware('guest');
+    Route::post('/get/group/cookies', 'LoginController@getCookies')->name('identifier.get.group.cookies')->middleware('guest');
+    Route::post('/forget/cookie', 'LoginController@forgetCookie')->name('identifier.forget.cookie')->middleware('guest');
 });
