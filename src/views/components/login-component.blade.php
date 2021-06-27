@@ -10,7 +10,7 @@
                                     <p class="create-account-text">اگر در {{ config('dizatech_identifier.site_title') }} حساب کاربری ندارید، ثبت نام کنید:</p>
                                 </div>
                                 <div class="col-md-4">
-                                    <a class="btn btn-success float-left create_account" href="#">
+                                    <a class="btn btn-warning float-left create_account" href="#">
                                         <span class="pl-2 pr-2">
                                             ایجاد حساب کاربری
                                         </span>
@@ -31,7 +31,7 @@
                                             </div>
                                             <input type="text" class="form-control username-field username_input" value=""
                                                    name="mobile" id="username" placeholder="ایمیل یا موبایل یا نام کاربری">
-                                            <a class="btn btn-success float-left mr-2 account_login" href="#">
+                                            <a class="btn btn-warning float-left mr-2 account_login" href="#">
                                                 <span class="pl-4 pr-4">
                                                     ورود
                                                 </span>
@@ -61,7 +61,7 @@
                                             </div>
                                             <input type="text" class="form-control username-field register_mobile" value=""
                                                    name="mobile" placeholder="موبایل">
-                                            <a class="btn btn-success float-left mr-2 code_step" href="#">
+                                            <a class="btn btn-warning float-left mr-2 code_step" href="#">
                                                 <span class="pl-4 pr-4">
                                                     ادامه
                                                 </span>
@@ -101,7 +101,7 @@
                                                     <span class="seconds">0</span>
                                                 </span>
                                             </button>
-                                            <a class="btn btn-success confirm_sms_code float-left mr-2" href="#">
+                                            <a class="btn btn-warning confirm_sms_code float-left mr-2" href="#">
                                                 <span>
                                                     تائید
                                                 </span>
