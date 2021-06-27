@@ -18,8 +18,14 @@ composer require dizatech/identifier
 
 #### Publish Config file
 
-```
+```bash
 php artisan vendor:publish --tag=dizatech_identifier
+```
+
+- Update (Be careful! Overwrites existing settings)
+
+```bash
+php artisan vendor:publish --tag=dizatech_identifier --force
 ```
 
 #### Migrate tables, to add identifier tables to database
