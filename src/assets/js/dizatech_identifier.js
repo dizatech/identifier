@@ -18,15 +18,15 @@ require('lity/dist/lity.min');
 
 require('jquery-ui/ui/effects/effect-slide');
 
-$(function () {
-    var url = window.location.href.replace(/\/$/, '');
-    page_type = url.substring(url.lastIndexOf('/') + 1);
-    if (typeof page_type != 'undefined'){
-        if(page_type === 'code'){
-            send_otp($('.otp_timer'));
-        }
-    }
-});
+// $(function () {
+//     var url = window.location.href.replace(/\/$/, '');
+//     page_type = url.substring(url.lastIndexOf('/') + 1);
+//     if (typeof page_type != 'undefined'){
+//         if(page_type === 'code'){
+//             send_otp($('.otp_timer'));
+//         }
+//     }
+// });
 
 // login and register handler
 $('.create_account').on('click', function (e) {
@@ -71,40 +71,35 @@ $('.code_step').on('click', function (e) {
 
 $('.confirm_sms_code').on('click', function (e) {
     e.preventDefault();
-    startLoading();
-    var register_mobile = '';
-    getCookie('notifier_username');
-    let getCookieByName = setInterval(function () {
-        if (cookie_value != '') {
-            clearInterval(getCookieByName);
-            register_mobile = cookie_value;
-            var register_code = $('.user_input_code').val();
-            $.ajax({
-                type: "post",
-                url: baseUrl + '/auth/confirm/code',
-                dataType: 'json',
-                data: {
-                    'mobile': register_mobile,
-                    'code': register_code
-                },
-                success: function (response) {
-                    hide_error_messages();
-                    if (response.status == 200){
-                        window.location = response.url;
-                    }else {
-                        stopLoading();
-                        alertify.error(response.message);
-                    }
-                },
-                error: function (response) {
-                    stopLoading();
-                    show_error_messages(response);
-                    alertify.error('لطفا خطاهای فرم را بررسی کنید.');
-                }
-            });
-        }
-    }, 50);
+    getData().done(function (data) {
+        console.log(data);
+    }).fail(function (result) {
+        console.log(result);
+    });
+    // startLoading();
+    // var register_mobile = '';
+    // getCookie('notifier_username');
+    // let getCookieByName = setInterval(function () {
+    //     if (cookie_value != '') {
+    //         clearInterval(getCookieByName);
+    //         register_mobile = cookie_value;
+    //         var register_code = $('.user_input_code').val();
+    //
+    //     }
+    // }, 50);
 });
+
+function getData() {
+    return $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/confirm/code',
+        dataType: 'json',
+        data: {
+            'mobile': '09026464374',
+            'code': '464166'
+        }
+    });
+}
 
 $('.otp_timer').on('click', function (e) {
     e.preventDefault();
