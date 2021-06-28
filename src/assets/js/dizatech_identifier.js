@@ -50,28 +50,22 @@ $('.create_account').on('click', function (e) {
 
 $('.account_login').on('click', function (e) {
     e.preventDefault();
-    setCookie('notifier_username', $('.username_input').val());
-    checkUser();
-});
-
-$('.code_step').on('click', function (e) {
-    e.preventDefault();
     startLoading();
-    let mobile_num = $('.register_mobile').val();
-    sendCode(mobile_num).done(function (code_result) {
-        if (code_result.status === 200){
-            send_otp($('.otp_timer'));
-            alertify.success(code_result.message);
-            $('.mobile_num').html('(' + mobile_num + ')');
+    var user_mobile = $('.username_input').val();
+    checkUser(user_mobile).done(function (data) {
+        hide_error_messages();
+        if (data.type === 'not_registered'){
             setGroupCookies({
-                'notifier_username': mobile_num,
-                'notifier_current_page': 'code',
-                'notifier_previous_page': 'register'
+                'notifier_username': user_mobile,
+                'notifier_current_page': 'not_registered',
+                'notifier_previous_page': 'default'
             }).done(function (response) {
                 stopLoading();
                 if (response.status === 200){
-                    change_url('','','/auth/code');
-                    slide_element('register', 'code');
+                    $('.mobile_num').html(user_mobile);
+                    $('.not_registered_mobile').val(user_mobile);
+                    change_url('','','/auth/not_registered');
+                    slide_element('default', 'not_registered');
                 }else {
                     alertify.error('خطای غیره منتظره‌ای رخ داده.');
                 }
@@ -80,7 +74,7 @@ $('.code_step').on('click', function (e) {
                 alertify.error('خطای غیره منتظره‌ای رخ داده.');
             });
         }else {
-            alertify.error(code_result.message);
+            send_code_handler(user_mobile, 'code', 'default');
         }
     }).fail(function (response) {
         stopLoading();
@@ -88,6 +82,46 @@ $('.code_step').on('click', function (e) {
         alertify.error('لطفا خطاهای فرم را بررسی کنید.');
     });
 });
+
+$('.code_step').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+    let mobile_num = $('.register_mobile').val();
+    send_code_handler(mobile_num,'code', 'register');
+});
+
+function send_code_handler(mobile_num, current_page, previous_page) {
+    sendCode(mobile_num).done(function (code_result) {
+        if (code_result.status === 200){
+            send_otp($('.otp_timer'));
+            alertify.success(code_result.message);
+            $('.mobile_num').html('(' + mobile_num + ')');
+            setGroupCookies({
+                'notifier_username': mobile_num,
+                'notifier_current_page': current_page,
+                'notifier_previous_page': previous_page
+            }).done(function (response) {
+                stopLoading();
+                if (response.status === 200){
+                    change_url('','','/auth/code');
+                    slide_element(previous_page, current_page);
+                }else {
+                    alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                }
+            }).fail(function () {
+                stopLoading();
+                alertify.error('خطای غیره منتظره‌ای رخ داده.');
+            });
+        }else {
+            stopLoading();
+            alertify.error(code_result.message);
+        }
+    }).fail(function (response) {
+        stopLoading();
+        show_error_messages(response);
+        alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+    });
+}
 
 $('.confirm_sms_code').on('click', function (e) {
     e.preventDefault();
@@ -138,8 +172,9 @@ $('.otp_timer').on('click', function (e) {
 
 $('.create_new_account').on('click', function (e) {
     e.preventDefault();
+    startLoading();
     let mobile_num = $('.not_registered_mobile').val();
-    sendCode(mobile_num, 'not_registered');
+    send_code_handler(mobile_num,'code', 'not_registered');
 });
 
 $('.back-btn').on('click', function (e) {
@@ -147,13 +182,15 @@ $('.back-btn').on('click', function (e) {
     startLoading();
     getGroupCookies(['notifier_current_page',
         'notifier_previous_page']).done(function (cookies_result) {
-        if (cookies_result.notifier_current_page == 'default') {
+        if (cookies_result.cookies.notifier_current_page == 'default') {
             window.location = '/';
         }else {
-            change_url('', '', cookies_result.notifier_previous_page);
-            setCookie('notifier_previous_page',
-                cookies_result.notifier_current_page).done(function () {
-                back_slide_element(cookies_result.notifier_current_page, cookies_result.notifier_previous_page);
+            change_url('', '', cookies_result.cookies.notifier_previous_page);
+            setGroupCookies({
+                'notifier_previous_page': cookies_result.cookies.notifier_current_page,
+                'notifier_current_page': cookies_result.cookies.notifier_previous_page
+            }).done(function () {
+                back_slide_element(cookies_result.cookies.notifier_current_page, cookies_result.cookies.notifier_previous_page);
                 stopLoading();
             }).fail(function () {
                 stopLoading();
@@ -237,32 +274,13 @@ function sendCode(mobile_field) {
     });
 }
 
-function checkUser() {
-    var mobile_field = getCookie('notifier_username');
-    $.ajax({
+function checkUser(mobile_field) {
+    return $.ajax({
         type: "post",
         url: baseUrl + '/auth/check/mobile',
         dataType: 'json',
         data: {
             'mobile': mobile_field
-        },
-        success: function (response) {
-            hide_error_messages();
-            Swal.close();
-            if (response.type === 'not_registered'){
-                $('.mobile_num').html(mobile_field);
-                $('.not_registered_mobile').val(mobile_field);
-                page = 'not_registered';
-                change_url('','','/auth/not_registered');
-                slide_element('default', 'not_registered');
-            }else {
-                $('.mobile_num').html('(' + mobile_field + ')');
-                sendCode(mobile_field, 'login');
-            }
-        },
-        error: function (response) {
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
         }
     });
 }

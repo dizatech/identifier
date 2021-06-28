@@ -121,7 +121,7 @@
                                 <div class="col-md-12">
                                     <h4 class="head-title text-center mb-0">
                                         <span class="mobile_number">
-                                            شماره موبایل <span class="mobile_num"></span> در {{ config('dizatech_identifier.site_title') }} ثبت نشده
+                                            شماره موبایل <span class="mobile_num">{{ request()->cookie('notifier_username') }}</span> در {{ config('dizatech_identifier.site_title') }} ثبت نشده
                                         </span>
                                     </h4>
                                 </div>
@@ -130,7 +130,7 @@
                         <input type="hidden" name="not_registered_mobile" class="not_registered_mobile" value="">
                         <div class="segment">
                             <a href="#" class="not_registered_button create_new_account">
-                                ساخت حساب کاربری جدید با <span class="mobile_num"></span>
+                                ساخت حساب کاربری جدید با <span class="mobile_num">{{ request()->cookie('notifier_username') }}</span>
                             </a>
                         </div>
                         <div class="segment">
