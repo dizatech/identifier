@@ -11,7 +11,7 @@ class LoginController extends Controller
 {
     public function show($page = 'default')
     {
-        if ($page != 'default' && is_null(\request()->cookie('notifier_username'))){
+        if ($page != 'default' && $page != 'register' && is_null(\request()->cookie('notifier_username'))){
             return redirect(route('identifier.login'));
         }
         return view('vendor.dizatech-identifier.identifier', [
@@ -45,7 +45,7 @@ class LoginController extends Controller
         $url = '';
         $result = NotifierLoginFacade::confirmSMS($request->mobile, $request->code);
         if ($result->status == 200){
-            NotifierLoginFacade::attempLogin($result->user);
+            $status = NotifierLoginFacade::attempLogin($result->user);
             if ($result->user->is_admin == 1){
                 $url = route(config('dizatech_identifier.admin_login_redirect'));
             }else{
