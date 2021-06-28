@@ -10,6 +10,9 @@ namespace Dizatech\Identifier\Facades;
  * @method static array confirmSMS()
  * @method static array attempLogin()
  * @method static array checkMobileExist()
+ * @method static array isEmail()
+ * @method static array isMobile()
+ * @method static array sendEmail()
  *
  * @see \Dizatech\Identifier\Repositories\NotifierLoginRepository
  */

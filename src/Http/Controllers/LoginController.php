@@ -84,13 +84,47 @@ class LoginController extends Controller
 
     public function checkUsername(Request $request)
     {
-        dd($request->all());
         $request->validate([
-            'username' => ['required', 'strung']
+            'username' => ['required', 'string']
         ],[
             'username.required' => 'فیلد موبایل یا ایمیل الزامی است.'
         ]);
-        dd($request->username);
+        $type = 'undefined';
+        $message = '';
+        if (NotifierLoginFacade::isMobile($request->username)){
+            $type = 'mobile';
+            $result = NotifierLoginFacade::sendSMS($request->username, 'recovery_mode');
+        }
+        if (NotifierLoginFacade::isEmail($request->username)){
+            $type = 'email';
+            $result = NotifierLoginFacade::sendEmail($request->username);
+        }
+        if ($type == 'undefined'){
+            $result = array();
+            $result['status'] = 404;
+            $result['message'] = 'تنها ایمیل یا موبایل قابل قبول است.';
+        }
+        return json_encode([
+            'status' => $result['status'],
+            'type' => $type,
+            'message' => $result['message']
+        ]);
+    }
+
+    public function confirmRecoveryCode(Request $request)
+    {
+        $request->validate([
+            'username' => ['required', 'string'],
+            'code' => ['required']
+        ],[
+            'username.required' => 'فیلد شماره موبایل یا ایمیل الزامی است.',
+            'code.required' => 'فیلد کد تایید الزامی است.'
+        ]);
+
+        return json_encode([
+            'status' => $result->status,
+            'message' => $result->message,
+        ]);
     }
 
     public function logout(Request $request)

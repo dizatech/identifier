@@ -5,6 +5,7 @@ namespace Dizatech\Identifier\Repositories;
 
 use Carbon\Carbon;
 use Dizatech\Identifier\Models\NotifierOtpCode;
+use Dizatech\Identifier\Notifications\Email\SendPasswordEmail;
 use Illuminate\Support\Facades\Auth;
 
 class NotifierLoginRepository
@@ -15,9 +16,21 @@ class NotifierLoginRepository
         return new $class;
     }
 
-    public function sendSMS($mobile)
+    public function sendSMS($mobile, $recovery_mode = null)
     {
-        $user = $this->createOrExistUser($mobile);
+        if (!is_null($recovery_mode)){
+            $checkUser = $this->existUserMobile($mobile);
+            if ($checkUser->status != 200){
+                return [
+                    'status' => $checkUser->status,
+                    'message' => $checkUser->message
+                ];
+            }else{
+                $user = $checkUser->user;
+            }
+        }else{
+            $user = $this->createOrExistUser($mobile);
+        }
         if ($this->checkIfLastOtpLogExpired($user) == 'expired'){
             $this->sendCode($user,'1', $this->generateOTP());
             return [
@@ -29,6 +42,31 @@ class NotifierLoginRepository
             return [
                 'status' => 400,
                 'message' => 'امکان ارسال مجدد تا ' . $diff . ' دیگر'
+            ];
+        }
+    }
+
+    public function sendEmail($email)
+    {
+        $checkUser = $this->existUserEmail($email);
+        if ($checkUser->status == 200){
+            if ($this->checkIfLastOtpLogExpired($user) == 'expired'){
+                $checkUser->user->notify(new SendPasswordEmail($this->generateOTP()));
+                return [
+                    'status' => 200,
+                    'message' => 'ایمیل کد برایتان ارسال شد.'
+                ];
+            }else{
+                $diff = $this->getOtpTimeDiff($this->getLastOtp($user->id));
+                return [
+                    'status' => 400,
+                    'message' => 'امکان ارسال مجدد تا ' . $diff . ' دیگر'
+                ];
+            }
+        }else{
+            return [
+                'status' => 200,
+                'message' => 'ایمیل وجود ندارد.'
             ];
         }
     }
@@ -94,6 +132,38 @@ class NotifierLoginRepository
             $user_object->password = bcrypt(stringToken(8));
             $user_object->save();
             return $user_object;
+        }
+    }
+
+    protected function existUserEmail($email)
+    {
+        $user_object = $this->user()::query()->where('email', '=', $email);
+        if ($user_object->count() > 0){
+            return (object) [
+                'user' => $user_object->first(),
+                'status' => 200
+            ];
+        }else{
+            return (object) [
+                'status' => 404,
+                'message' => 'ایمیل پیدا نشد.'
+            ];
+        }
+    }
+
+    protected function existUserMobile($mobile)
+    {
+        $user_object = $this->user()::query()->where('mobile', '=', $mobile);
+        if ($user_object->count() > 0){
+            return (object) [
+                'user' => $user_object->first(),
+                'status' => 200
+            ];
+        }else{
+            return (object) [
+                'status' => 404,
+                'message' => 'شماره موبایل پیدا نشد.'
+            ];
         }
     }
 
@@ -195,5 +265,23 @@ class NotifierLoginRepository
         }else{
             return 'not_registered';
         }
+    }
+
+    public function isEmail($input): bool
+    {
+        $regex = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
+        if(preg_match($regex, $input)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isMobile($input): bool
+    {
+        $regex = "/^09\d{9}$/";
+        if(preg_match($regex, $input)) {
+            return true;
+        }
+        return false;
     }
 }

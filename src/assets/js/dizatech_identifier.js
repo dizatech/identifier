@@ -26,13 +26,6 @@ $(function () {
             send_otp($('.otp_timer'));
         }
     }
-    getGroupCookies(['notifier_current_page',
-        'notifier_previous_page']).done(function (cookies_result) {
-        console.log(cookies_result.cookies);
-    }).fail(function () {
-        stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
-    });
 });
 
 // forgot password handler
@@ -60,22 +53,25 @@ $('.forget_action').on('click', function (e) {
             'username': username_input
         },
         success: function (response) {
-            console.log(response);
-            stopLoading();
+            if (response.status === 200){
+                setCookie('notifier_username', username_input).done(function (data) {
+
+                }).fail(function () {
+                    stopLoading();
+                    alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                });
+            }else {
+                stopLoading();
+                show_error_messages(response);
+                alertify.error(response.message);
+            }
         },
         error: function (response) {
-            console.log(response);
             stopLoading();
             show_error_messages(response);
             alertify.error('لطفا خطاهای فرم را بررسی کنید.');
         }
     });
-    // setCookie('notifier_username', username_input).done(function (data) {
-    //
-    // }).fail(function () {
-    //     stopLoading();
-    //     alertify.error('خطای غیره منتظره‌ای رخ داده.');
-    // });
 });
 
 function openRecoveryPage(current_page,previous_page) {
