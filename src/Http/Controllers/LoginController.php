@@ -45,18 +45,25 @@ class LoginController extends Controller
         $url = '';
         $result = NotifierLoginFacade::confirmSMS($request->mobile, $request->code);
         if ($result->status == 200){
-            $status = NotifierLoginFacade::attempLogin($result->user);
-            if ($result->user->is_admin == 1){
-                $url = route(config('dizatech_identifier.admin_login_redirect'));
-            }else{
-                $url = route(config('dizatech_identifier.user_login_redirect'));
+            $attempLogin = NotifierLoginFacade::attempLogin($result->user);
+            if ($attempLogin->status == 200){
+                if ($result->user->is_admin == 1){
+                    $url = route(config('dizatech_identifier.admin_login_redirect'));
+                }else{
+                    $url = route(config('dizatech_identifier.user_login_redirect'));
+                }
+                return json_encode([
+                    'status' => $result->status,
+                    'message' => $result->message,
+                    'url' => $url
+                ]);
             }
+        }else{
+            return json_encode([
+                'status' => $result->status,
+                'message' => $result->message,
+            ]);
         }
-        return json_encode([
-            'status' => $result->status,
-            'message' => $result->message,
-            'url' => $url
-        ]);
     }
 
     public function checkMobile(Request $request)
@@ -90,7 +97,7 @@ class LoginController extends Controller
         ]);
         return response()
             ->json(['success' => true], 200)
-            ->withCookie(cookie($request->cookie_name, $request->cookie_value, 30));
+            ->withCookie(cookie($request->cookie_name, $request->cookie_value, 120));
     }
 
     public function setCookies(Request $request){

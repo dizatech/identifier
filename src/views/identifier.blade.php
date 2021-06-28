@@ -49,8 +49,8 @@
                 <div class="card not_registered" style="display:@if($page == 'not_registered') block @else none @endif">
                     <x-login-component page="not_registered"></x-login-component>
                 </div>
-                <div class="card forgot" style="display:@if($page == 'forgot') block @else none @endif">
-                    <x-login-component page="forgot"></x-login-component>
+                <div class="card recovery" style="display:@if($page == 'recovery') block @else none @endif">
+                    <x-login-component page="recovery"></x-login-component>
                 </div>
             </div>
         </div>

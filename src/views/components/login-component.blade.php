@@ -41,7 +41,7 @@
                                             <strong></strong>
                                         </span>
                                     </div>
-                                    <a href="#" class="forgot-password">فراموش کردید ؟! (بازیابی اطلاعات کاربری)</a>
+                                    <a href="#" class="open_recovery forgot-password">فراموش کردید ؟! (بازیابی اطلاعات کاربری)</a>
                                 </div>
                             </div>
                         </div>
@@ -134,10 +134,39 @@
                             </a>
                         </div>
                         <div class="segment">
-                            <a href="#" class="not_registered_button forgot_my_info">
+                            <a href="#" class="not_registered_button open_recovery_not_reg">
                                 حساب کاربری دارم ولی اطلاعات آن را فراموش کردم
                             </a>
                         </div>
+                    @break
+                    @case('recovery')
+                    <div class="segment">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="head-title">فراموشی رمزعبور</h4>
+                                <span class="mobile-reg-text">موبایل یا ایمیل خود را وارد کنید</span>
+                                <div class="form-group">
+                                    <div class="group d-flex">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text pl-3 pr-3" id="basic-addon1">
+                                                <i class="fa fa-mobile icon-size" aria-hidden="true"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text" class="form-control username-field mobile_or_email" value=""
+                                               name="email_or_mobile" placeholder="موبایل یا ایمیل">
+                                        <a class="btn btn-warning float-left mr-2 forget_action" href="#">
+                                            <span class="pl-4 pr-4">
+                                                ادامه
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <span class="invalid-feedback mt-4 d-none">
+                                        <strong></strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     @break
                 @endswitch
             </div>

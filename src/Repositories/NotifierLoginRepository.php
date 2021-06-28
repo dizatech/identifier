@@ -36,7 +36,7 @@ class NotifierLoginRepository
     public function attempLogin($user)
     {
         if (Auth::loginUsingId($user->id)){
-            return [
+            return (object) [
                 'status' => 200,
                 'message' => "باموفقیت وارد شدید"
             ];

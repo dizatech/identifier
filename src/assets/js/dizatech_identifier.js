@@ -26,7 +26,49 @@ $(function () {
             send_otp($('.otp_timer'));
         }
     }
+    getGroupCookies(['notifier_current_page',
+        'notifier_previous_page']).done(function (cookies_result) {
+        console.log(cookies_result.cookies);
+    }).fail(function () {
+        stopLoading();
+        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+    });
 });
+
+// forgot password handler
+$('.open_recovery_not_reg').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+    openRecoveryPage('recovery', 'not_registered');
+});
+
+$('.open_recovery').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+    openRecoveryPage('recovery', 'default');
+});
+
+$('.forget_action').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+
+});
+
+function openRecoveryPage(current_page,previous_page) {
+    setGroupCookies({'notifier_current_page': current_page,
+        'notifier_previous_page': previous_page}).done(function (response) {
+        stopLoading();
+        if (response.status === 200){
+            change_url('','','/auth/recovery');
+            slide_element(previous_page, current_page);
+        }else {
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
+    }).fail(function () {
+        stopLoading();
+        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+    });
+}
 
 // login and register handler
 $('.create_account').on('click', function (e) {
@@ -45,7 +87,6 @@ $('.create_account').on('click', function (e) {
         stopLoading();
         alertify.error('خطای غیره منتظره‌ای رخ داده.');
     });
-
 });
 
 $('.account_login').on('click', function (e) {
@@ -118,8 +159,14 @@ function send_code_handler(mobile_num, current_page, previous_page) {
         }
     }).fail(function (response) {
         stopLoading();
-        show_error_messages(response);
-        alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+        let msg = '';
+        if (response.status === 500){
+            msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
+        }else {
+            show_error_messages(response);
+            msg = 'لطفا خطاهای فرم را بررسی کنید.';
+        }
+        alertify.error(msg);
     });
 }
 
@@ -151,7 +198,6 @@ $('.otp_timer').on('click', function (e) {
     e.preventDefault();
     startLoading();
     getCookie('notifier_username').done(function (data) {
-        stopLoading();
         sendCode(data.cookie).done(function (code_result) {
             hide_error_messages();
             if (code_result.status === 200){
@@ -159,10 +205,17 @@ $('.otp_timer').on('click', function (e) {
             }else {
                 alertify.error(code_result.message);
             }
+            stopLoading();
         }).fail(function () {
             stopLoading();
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+            let msg = '';
+            if (response.status === 500){
+                msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
+            }else {
+                show_error_messages(response);
+                msg = 'لطفا خطاهای فرم را بررسی کنید.';
+            }
+            alertify.error(msg);
         });
     }).fail(function () {
         stopLoading();
@@ -182,7 +235,7 @@ $('.back-btn').on('click', function (e) {
     startLoading();
     getGroupCookies(['notifier_current_page',
         'notifier_previous_page']).done(function (cookies_result) {
-        if (cookies_result.cookies.notifier_current_page == 'default') {
+        if (cookies_result.cookies.notifier_current_page == 'default'){
             window.location = '/';
         }else {
             change_url('', '', cookies_result.cookies.notifier_previous_page);
@@ -190,7 +243,18 @@ $('.back-btn').on('click', function (e) {
                 'notifier_previous_page': cookies_result.cookies.notifier_current_page,
                 'notifier_current_page': cookies_result.cookies.notifier_previous_page
             }).done(function () {
-                back_slide_element(cookies_result.cookies.notifier_current_page, cookies_result.cookies.notifier_previous_page);
+                let current_page = cookies_result.cookies.notifier_current_page;
+                let perv_page = cookies_result.cookies.notifier_previous_page;
+                switch (current_page) {
+                    case "register":
+                        back_slide_element(current_page, 'default');
+                        break;
+                    case "not_registered":
+                        back_slide_element(current_page, 'default');
+                        break;
+                    default:
+                        back_slide_element(current_page, perv_page);
+                }
                 stopLoading();
             }).fail(function () {
                 stopLoading();
@@ -202,6 +266,7 @@ $('.back-btn').on('click', function (e) {
         alertify.error('خطای غیره منتظره‌ای رخ داده.');
     });
 });
+
 // start helper functions
 
 function slide_element(hide,show) {
@@ -298,7 +363,7 @@ function setCookie(cookieName,cookieValue) {
 }
 
 function setGroupCookies(cookies_array) {
-    return  $.ajax({
+    return $.ajax({
         type: "post",
         url: baseUrl + '/auth/set/group/cookies',
         dataType: 'json',
