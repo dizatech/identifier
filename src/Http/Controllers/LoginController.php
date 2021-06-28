@@ -11,7 +11,10 @@ class LoginController extends Controller
 {
     public function show($page = 'default')
     {
-        if ($page != 'default' && $page != 'register' && is_null(\request()->cookie('notifier_username'))){
+        if ($page != 'default' &&
+            $page != 'register' &&
+            $page != 'recovery' &&
+            is_null(\request()->cookie('notifier_username'))){
             return redirect(route('identifier.login'));
         }
         return view('vendor.dizatech-identifier.identifier', [
@@ -77,6 +80,17 @@ class LoginController extends Controller
         return json_encode([
             'type' => $result,
         ]);
+    }
+
+    public function checkUsername(Request $request)
+    {
+        dd($request->all());
+        $request->validate([
+            'username' => ['required', 'strung']
+        ],[
+            'username.required' => 'فیلد موبایل یا ایمیل الزامی است.'
+        ]);
+        dd($request->username);
     }
 
     public function logout(Request $request)

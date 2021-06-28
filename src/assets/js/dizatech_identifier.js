@@ -51,7 +51,31 @@ $('.open_recovery').on('click', function (e) {
 $('.forget_action').on('click', function (e) {
     e.preventDefault();
     startLoading();
-
+    let username_input = $('.mobile_or_email').val();
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/check/username',
+        dataType: 'json',
+        data: {
+            'username': username_input
+        },
+        success: function (response) {
+            console.log(response);
+            stopLoading();
+        },
+        error: function (response) {
+            console.log(response);
+            stopLoading();
+            show_error_messages(response);
+            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+        }
+    });
+    // setCookie('notifier_username', username_input).done(function (data) {
+    //
+    // }).fail(function () {
+    //     stopLoading();
+    //     alertify.error('خطای غیره منتظره‌ای رخ داده.');
+    // });
 });
 
 function openRecoveryPage(current_page,previous_page) {

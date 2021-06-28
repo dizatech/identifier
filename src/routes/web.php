@@ -11,6 +11,7 @@ Route::group([
     Route::post('/confirm/code', 'LoginController@confirmCode')->name('identifier.confirm.code')->middleware('guest');
     Route::post('/check/mobile', 'LoginController@checkMobile')->name('identifier.check.mobile')->middleware('guest');
     Route::post('/logout', 'LoginController@logout')->name('identifier.logout');
+    Route::post('/check/username', 'LoginController@checkUsername')->name('identifier.check.username');
 
     Route::post('/set/cookie', 'LoginController@setCookie')->name('identifier.set.cookie')->middleware('guest');
     Route::post('/set/group/cookies', 'LoginController@setCookies')->name('identifier.set.group.cookies')->middleware('guest');

@@ -153,7 +153,7 @@
                                             </span>
                                         </div>
                                         <input type="text" class="form-control username-field mobile_or_email" value=""
-                                               name="email_or_mobile" placeholder="موبایل یا ایمیل">
+                                               name="username" placeholder="موبایل یا ایمیل">
                                         <a class="btn btn-warning float-left mr-2 forget_action" href="#">
                                             <span class="pl-4 pr-4">
                                                 ادامه
