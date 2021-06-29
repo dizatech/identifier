@@ -227,3 +227,27 @@ body {
     color: rgb(111, 114, 133);
     align-self: baseline;
 }
+
+.login_via_password{
+    color: rgb(68, 68, 68);
+    position: relative;
+    appearance: none;
+    background-color: transparent;
+    transition: color 200ms ease 0s;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.login_via_password:hover{
+    text-decoration: none;
+}
+
+.lock-icon{
+    width: 20px;
+    height: 20px;
+    margin-left: 15px;
+    fill: rgb(68, 68, 68);
+    display: inline-block;
+    vertical-align: middle;
+}

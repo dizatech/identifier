@@ -117,6 +117,7 @@ class NotifierLoginRepository
         $code_status = $this->checkIfOtpLogExpired($code,$user->mobile,$user);
         if ($code_status == 'not_expired'){
             $this->verifyUser($user);
+            $this->forgetAllCookies();
             return (object) [
                 'status' => 200,
                 'message' => 'کد باموفقیت تایید شد.',
@@ -170,12 +171,22 @@ class NotifierLoginRepository
         }
     }
 
+    protected function forgetAllCookies()
+    {
+        $this->forgetCookie(\request()->cookie('identifier_verified_recovery'));
+        $this->forgetCookie(\request()->cookie('notifier_username'));
+        $this->forgetCookie(\request()->cookie('notifier_recovery_type'));
+        $this->forgetCookie(\request()->cookie('notifier_previous_page'));
+        $this->forgetCookie(\request()->cookie('notifier_current_page'));
+    }
+
     public function changePasswordViaMobile($username, $new_password)
     {
         $checkUser = $this->existUserMobile($username);
         if ($checkUser->status == 200){
             $this->updateUserPassword($new_password,$checkUser->user);
             $this->attempLogin($checkUser->user);
+            $this->forgetAllCookies();
             return (object) [
                 'user' => $checkUser->user,
                 'status' => 200,
@@ -195,6 +206,7 @@ class NotifierLoginRepository
         if ($checkUser->status == 200){
             $this->updateUserPassword($new_password,$checkUser->user);
             $this->attempLogin($checkUser->user);
+            $this->forgetAllCookies();
             return (object) [
                 'user' => $checkUser->user,
                 'status' => 200,
@@ -212,6 +224,44 @@ class NotifierLoginRepository
     {
         $user->password = Hash::make($password);
         $user->save();
+    }
+
+    public function loginViaPassword($username, $password)
+    {
+        $checkUser = $this->existUserMobile($username);
+        if ($checkUser->status == 200){
+            if(Auth::attempt([
+                'mobile' => $username,
+                'password' => $password
+            ])){
+                $this->forgetAllCookies();
+                return (object) [
+                    'user' => $checkUser->user,
+                    'status' => 200,
+                    'message' => 'باموفقیت وارد شدید.'
+                ];
+            }else{
+                return (object) [
+                    'status' => 400,
+                    'message' => 'اطلاعات واردشده اشتباه است.'
+                ];
+            }
+        }else{
+            return (object) [
+                'status' => 400,
+                'message' => 'کاربر پیدا نشد.'
+            ];
+        }
+    }
+
+    protected function forgetCookie($cookie_name)
+    {
+        if (!is_null($cookie_name)){
+            \Cookie::forget($cookie_name);
+        }
+        return json_encode([
+            'status' => 200
+        ]);
     }
 
     protected function createOrExistUser($mobile)

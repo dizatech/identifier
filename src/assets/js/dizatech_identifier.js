@@ -48,7 +48,7 @@ $('.forget_action').on('click', function (e) {
     e.preventDefault();
     startLoading();
     let username_input = $('.mobile_or_email').val();
-    sendEmail(username_input).done(function (response) {
+    sendEmailOrSMS(username_input).done(function (response) {
         if (response.status === 200){
             setGroupCookies({
                 'notifier_username': username_input,
@@ -81,7 +81,7 @@ $('.recovery_timer').on('click', function (e) {
     e.preventDefault();
     startLoading();
     getCookie('notifier_username').done(function (data) {
-        sendEmail(data.cookie).done(function (response) {
+        sendEmailOrSMS(data.cookie).done(function (response) {
             stopLoading();
             if (response.status === 200){
                 send_otp($('.recovery_timer'));
@@ -175,6 +175,40 @@ function openRecoveryPage(current_page,previous_page) {
         alertify.error('خطای غیره منتظره‌ای رخ داده.');
     });
 }
+
+$('.login_via_password').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+    openPasswordPage('password', 'code');
+    stopLoading();
+});
+
+$('.login_with_password').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+    let password_input = $('.password_input').val();
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/login/password',
+        dataType: 'json',
+        data: {
+            'password': password_input,
+        },
+        success: function (response) {
+            if (response.status === 200){
+                window.location = response.url;
+            }else {
+                alertify.error(response.message);
+                stopLoading();
+            }
+        },
+        error: function (response) {
+            stopLoading();
+            show_error_messages(response);
+            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+        }
+    });
+});
 
 function openPasswordPage(current_page,previous_page) {
     setGroupCookies({'notifier_current_page': current_page,
@@ -406,6 +440,12 @@ $('.back-btn').on('click', function (e) {
                     case "not_registered":
                         back_slide_element(current_page, 'default');
                         break;
+                    case "recovery":
+                        back_slide_element(current_page, 'default');
+                        break;
+                    case "recovery_code":
+                        back_slide_element(current_page, 'recovery');
+                        break;
                     default:
                         back_slide_element(current_page, perv_page);
                 }
@@ -588,7 +628,7 @@ function confirmRecoveryCode(username,code,type) {
     });
 }
 
-function sendEmail(username_input) {
+function sendEmailOrSMS(username_input) {
     return $.ajax({
         type: "post",
         url: baseUrl + '/auth/check/username',

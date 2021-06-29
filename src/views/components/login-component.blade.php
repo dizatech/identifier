@@ -30,7 +30,7 @@
                                                 </span>
                                             </div>
                                             <input type="text" class="form-control username-field username_input" value=""
-                                                   name="mobile" id="username" placeholder="ایمیل یا موبایل یا نام کاربری">
+                                                   name="mobile" id="username" placeholder="موبایل">
                                             <a class="btn btn-warning float-left mr-2 account_login" href="#">
                                                 <span class="pl-4 pr-4">
                                                     ورود
@@ -83,7 +83,7 @@
                         <div class="segment">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4 class="head-title">{{ $page == 'code' ? ' ثبت‌نام در' : 'ورود به ' }} {{ config('dizatech_identifier.site_title') }}</h4>
+                                    <h4 class="head-title">{{ request()->cookie('notifier_previous_page') == 'default' ? ' ورود به' : 'ثبت‌نام در ' }} {{ config('dizatech_identifier.site_title') }}</h4>
                                     <div class="mb-4">
                                         <span class="mobile-code-text">
                                             <i class="sms-icon"></i>
@@ -113,6 +113,12 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="segment">
+                            <a href="#" class="login_via_password">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="lock-icon" width="512" height="512" viewBox="0 0 535.5 535.5"><path d="M420.75 178.5h-25.5v-51c0-71.4-56.1-127.5-127.5-127.5s-127.5 56.1-127.5 127.5v51h-25.5c-28.05 0-51 22.95-51 51v255c0 28.05 22.95 51 51 51h306c28.05 0 51-22.95 51-51v-255c0-28.05-22.95-51-51-51zm-153-130.05c43.35 0 79.05 35.7 79.05 79.05v51H191.25v-51h-2.55c0-43.35 35.7-79.05 79.05-79.05zm153 436.05h-306v-255h306v255zm-153-76.5c28.05 0 51-22.95 51-51s-22.95-51-51-51-51 22.95-51 51 22.95 51 51 51z"></path></svg>
+                                می‌خواهم با رمز عبور وارد شوم
+                            </a>
                         </div>
                     @break
                     @case('not_registered')
@@ -213,7 +219,7 @@
 
                         <div class="form-group">
                             <span class="recovery_pass_span">رمز جدید خود را وارد کنید</span>
-                            <input type="text" class="form-control username-field recovery_new_password" value=""
+                            <input type="password" class="form-control username-field recovery_new_password" value=""
                                    name="new_password">
                             <span class="tip">رمز انتخابی شما برای قوی&zwnj;تر شدن، باید شامل یکی از حروف (a تا z) و بیش از 6 کاراکتر باشد.</span>
                             <span class="invalid-feedback mt-4 d-none">
@@ -222,7 +228,7 @@
                         </div>
                         <div class="form-group">
                             <span class="recovery_pass_span">رمز جدید خود را یک بار دیگر وارد کنید</span>
-                            <input type="text" class="form-control username-field recovery_new_password_confirm" value=""
+                            <input type="password" class="form-control username-field recovery_new_password_confirm" value=""
                                    name="password_confirm">
                             <span class="invalid-feedback mt-4 d-none">
                                 <strong></strong>
@@ -233,6 +239,29 @@
                                 <a href="#" class="change_password_btn d-inline-block">
                                     تغییر رمز
                                 </a>
+                            </div>
+                        </div>
+                    </div>
+                    @break
+                    @case('password')
+                    <div class="segment">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="head-title">ورود با رمزعبور</h4>
+                                <div class="form-group">
+                                    <div class="group d-flex">
+                                        <input type="password" class="form-control username-field password_input" value=""
+                                               name="password" placeholder="رمزعبور">
+                                        <a class="btn btn-warning login_with_password float-left mr-2" href="#">
+                                            <span>
+                                                ورود
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <span class="invalid-feedback mt-4 d-none">
+                                        <strong></strong>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -182,6 +182,28 @@ class LoginController extends Controller
         ]);
     }
 
+    public function loginWithPassword(Request $request)
+    {
+        $request->validate([
+            'password' => ['required', 'min:6']
+        ]);
+        $username = \request()->cookie('notifier_username');
+        $url = '';
+        $result = NotifierLoginFacade::loginViaPassword($username,$request->password);
+        if ($result->status == 200){
+            if ($result->user->is_admin == 1){
+                $url = route(config('dizatech_identifier.admin_login_redirect'));
+            }else{
+                $url = route(config('dizatech_identifier.user_login_redirect'));
+            }
+        }
+        return json_encode([
+            'status' => $result->status,
+            'message' => $result->message,
+            'url' => $url
+        ]);
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();
@@ -236,17 +258,6 @@ class LoginController extends Controller
         }
         return json_encode([
             'cookies' => $cookies
-        ]);
-    }
-
-    public function forgetCookie()
-    {
-        $request->validate([
-            'cookie_name' => ['required','string']
-        ]);
-        \Cookie::forget($request->cookie_name);
-        return json_encode([
-            'status' => 200
         ]);
     }
 }
