@@ -653,8 +653,8 @@ function stopLoading() {
 //start timer
 function send_otp(target) {
     target.prop("disabled",true);
-    var min=0;
-    var sec=4;
+    var min=2;
+    var sec=0;
     target.find('.otp_timer_text').html('<span class="minutes">2</span>' + ':' + '<span class="seconds">0</span>');
     start_count_down(min,sec,target);
 }
