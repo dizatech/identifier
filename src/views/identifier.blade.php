@@ -52,6 +52,12 @@
                 <div class="card recovery" style="display:@if($page == 'recovery') block @else none @endif">
                     <x-login-component page="recovery"></x-login-component>
                 </div>
+                <div class="card password" style="display:@if($page == 'password') block @else none @endif">
+                    <x-login-component page="password"></x-login-component>
+                </div>
+                <div class="card recovery_code" style="display:@if($page == 'recovery_code') block @else none @endif">
+                    <x-login-component page="recovery_code"></x-login-component>
+                </div>
             </div>
         </div>
     </div>

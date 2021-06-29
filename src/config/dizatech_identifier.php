@@ -1,7 +1,7 @@
 <?php
 return [
     // the title of site (this will be used in title and help titles)
-    'site_title' => 'پیش فرض',
+    'site_title' => env('APP_NAME', 'پیش فرض'),
 
     // full url of terms page (this will be used in register page)
     'terms_url' => 'http://localhost:8000/',

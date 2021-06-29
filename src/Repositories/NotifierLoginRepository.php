@@ -46,18 +46,18 @@ class NotifierLoginRepository
         }
     }
 
-    public function sendEmail($email)
+    public function sendConfirmEmail($email)
     {
         $checkUser = $this->existUserEmail($email);
         if ($checkUser->status == 200){
-            if ($this->checkIfLastOtpLogExpired($user) == 'expired'){
-                $checkUser->user->notify(new SendPasswordEmail($this->generateOTP()));
+            if ($this->checkIfLastOtpLogExpired($checkUser->user) == 'expired'){
+                $this->sendEmail($checkUser->user,$this->generateOTP());
                 return [
                     'status' => 200,
                     'message' => 'ایمیل کد برایتان ارسال شد.'
                 ];
             }else{
-                $diff = $this->getOtpTimeDiff($this->getLastOtp($user->id));
+                $diff = $this->getOtpTimeDiff($this->getLastOtp($checkUser->user->id));
                 return [
                     'status' => 400,
                     'message' => 'امکان ارسال مجدد تا ' . $diff . ' دیگر'
@@ -69,6 +69,13 @@ class NotifierLoginRepository
                 'message' => 'ایمیل وجود ندارد.'
             ];
         }
+    }
+
+    protected function sendEmail($user,$otp_code)
+    {
+        $user->notify(new SendPasswordEmail($otp_code));
+        $this->makeExpireLastOtpLog($user->id);
+        $this->newOtpLog($otp_code,$user->id);
     }
 
     public function attempLogin($user)
@@ -90,15 +97,65 @@ class NotifierLoginRepository
         }
     }
 
-    public function confirmSMS($mobile, $code)
+    public function confirmSMS($mobile, $code, $recovery_mode = null)
     {
-        $user = $this->createOrExistUser($mobile);
+        if (!is_null($recovery_mode)){
+            $checkUser = $this->existUserMobile($mobile);
+            if ($checkUser->status != 200){
+                return [
+                    'status' => $checkUser->status,
+                    'message' => $checkUser->message
+                ];
+            }else{
+                $user = $checkUser->user;
+            }
+        }else{
+            $user = $this->createOrExistUser($mobile);
+        }
         $code_status = $this->checkIfOtpLogExpired($code,$user->mobile,$user);
         if ($code_status == 'not_expired'){
             $this->verifyUser($user);
             return (object) [
                 'status' => 200,
-                'message' => 'ثبت نام باموفقیت انجام شد.',
+                'message' => 'کد باموفقیت تایید شد.',
+                'user' => $user
+            ];
+        }else{
+            if ($code_status == 'not_valid'){
+                return (object) [
+                    'status' => 400,
+                    'message' => 'کد وارد شده معتبر نیست.'
+                ];
+            }else{
+                return (object) [
+                    'status' => 400,
+                    'message' => 'کد وارد شده منقضی شده است.'
+                ];
+            }
+        }
+    }
+
+    public function confirmEmail($email, $code)
+    {
+        if (!is_null($recovery_mode)){
+            $checkUser = $this->existUserMobile($mobile);
+            if ($checkUser->status != 200){
+                return [
+                    'status' => $checkUser->status,
+                    'message' => $checkUser->message
+                ];
+            }else{
+                $user = $checkUser->user;
+            }
+        }else{
+            $user = $this->createOrExistUser($mobile);
+        }
+        $code_status = $this->checkIfOtpLogExpired($code,$user->mobile,$user);
+        if ($code_status == 'not_expired'){
+            $this->verifyUser($user);
+            return (object) [
+                'status' => 200,
+                'message' => 'کد باموفقیت تایید شد.',
                 'user' => $user
             ];
         }else{
@@ -190,7 +247,7 @@ class NotifierLoginRepository
         NotifierOtpCode::query()->create([
             'code' => $otp_pass,
             'user_id' => $user_id,
-            'expires_at' => Carbon::now()->addMinutes(2),
+            'expired_at' => Carbon::now()->addMinutes(2),
             'is_expired' => 'no'
         ]);
     }
@@ -201,7 +258,7 @@ class NotifierLoginRepository
         if (is_null($otp)){
             return 'not_valid';
         }
-        if (Carbon::now()->toDateTimeString() > $otp->expires_at){
+        if (Carbon::now()->toDateTimeString() > $otp->expired_at){
             $this->makeExpireLastOtpLog($user->id);
             return 'expired';
         }else{
@@ -213,7 +270,7 @@ class NotifierLoginRepository
     {
         $otp = $this->getLastOtp($user->id);
         if (!is_null($otp)){
-            if (Carbon::now()->toDateTimeString() > $otp->expires_at){
+            if (Carbon::now()->toDateTimeString() > $otp->expired_at){
                 return 'expired';
             }else{
                 return 'not_expired';
@@ -252,7 +309,7 @@ class NotifierLoginRepository
 
     protected function getOtpTimeDiff($otp)
     {
-        $diff_in_sec = Carbon::parse(Carbon::now()->toDateTimeString())->diffInSeconds($otp->expires_at);
+        $diff_in_sec = Carbon::parse(Carbon::now()->toDateTimeString())->diffInSeconds($otp->expired_at);
         return gmdate('i:s', $diff_in_sec) . ' ثانیه';
     }
 

@@ -45,10 +45,10 @@ class SendPasswordEmail extends Notification
     {
         return (new MailMessage)
             ->theme((app()->getLocale() == 'fa') ? 'rtl-theme' : 'default')
-            ->greeting(Lang::get('mail.sendPassword.greeting'))
-            ->salutation(Lang::get('mail.sendPassword.salutation'))
-            ->subject(Lang::get('mail.sendPassword.subject'))
-            ->line(Lang::get('mail.sendPassword.excerpt'))
+            ->greeting('با سلام و عرض ادب')
+            ->salutation('اراتمند شما وبسایت ' . config('dizatech_identifier.site_title'))
+            ->subject('رمزعبور حساب کاربری')
+            ->line('لطفا برای ورود به حساب کاربری خود، از رمز زیر استفاده نمایید')
             ->line($this->password);
     }
 

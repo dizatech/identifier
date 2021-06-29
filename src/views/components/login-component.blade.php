@@ -168,6 +168,41 @@
                         </div>
                     </div>
                     @break
+                    @case('recovery_code')
+                    <div class="segment">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="head-title">بازیابی رمزعبور</h4>
+                                <div class="mb-4">
+                                        <span class="mobile-code-text">
+                                            کد فرستاده شده برای  <span class="user_info">({{ request()->cookie('notifier_username') }})</span>  را وارد کنید
+                                        </span>
+                                </div>
+                                <div class="form-group">
+                                    <div class="group d-flex">
+                                        <input type="text" class="form-control username-field recovery_code_input" value=""
+                                               name="code" placeholder="کد تایید">
+                                        <button class='btn btn-info float-right text-center mr-2 recovery_timer' disabled>
+                                                <span class='d-flex justfy-content-between align-items-center flex-row-reverse otp_timer_text'>
+                                                    <span class="minutes">2</span>
+                                                    :
+                                                    <span class="seconds">0</span>
+                                                </span>
+                                        </button>
+                                        <a class="btn btn-warning confirm_recovery_code float-left mr-2" href="#">
+                                            <span>
+                                                تائید
+                                            </span>
+                                        </a>
+                                    </div>
+                                    <span class="invalid-feedback mt-4 d-none">
+                                        <strong></strong>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @break
                 @endswitch
             </div>
         </div>

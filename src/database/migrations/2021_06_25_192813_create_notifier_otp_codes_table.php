@@ -18,7 +18,7 @@ class CreateNotifierOtpCodesTable extends Migration
             $table->string('code');
             $table->bigInteger('user_id');
             $table->enum('is_expired',['yes','no']);
-            $table->dateTime('expires_at');
+            $table->dateTime('expired_at');
             $table->timestamps();
         });
     }

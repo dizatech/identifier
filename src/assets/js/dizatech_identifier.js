@@ -25,6 +25,9 @@ $(function () {
         if(page_type === 'code'){
             send_otp($('.otp_timer'));
         }
+        if(page_type === 'recovery_code'){
+            send_otp($('.recovery_timer'));
+        }
     }
 });
 
@@ -45,32 +48,81 @@ $('.forget_action').on('click', function (e) {
     e.preventDefault();
     startLoading();
     let username_input = $('.mobile_or_email').val();
-    $.ajax({
-        type: "post",
-        url: baseUrl + '/auth/check/username',
-        dataType: 'json',
-        data: {
-            'username': username_input
-        },
-        success: function (response) {
-            if (response.status === 200){
-                setCookie('notifier_username', username_input).done(function (data) {
-
-                }).fail(function () {
-                    stopLoading();
-                    alertify.error('خطای غیره منتظره‌ای رخ داده.');
-                });
-            }else {
+    sendEmail(username_input).done(function (response) {
+        if (response.status === 200){
+            setGroupCookies({
+                'notifier_username': username_input,
+                'recovery_type': response.type
+            }).done(function (data) {
+                if (response.status === 200){
+                    $('.user_info').html('('+ username_input +')');
+                    send_otp($('.recovery_timer'));
+                    alertify.success(response.message);
+                    openRecoveryCodePage('recovery_code', 'recovery');
+                }
                 stopLoading();
-                show_error_messages(response);
+            }).fail(function () {
+                stopLoading();
+                alertify.error('خطای غیره منتظره‌ای رخ داده.');
+            });
+        }else {
+            stopLoading();
+            show_error_messages(response);
+            alertify.error(response.message);
+        }
+    }).fail(function (response) {
+        stopLoading();
+        show_error_messages(response);
+        alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+    });
+});
+
+$('.recovery_timer').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+    getCookie('notifier_username').done(function (data) {
+        sendEmail(data.cookie).done(function (response) {
+            stopLoading();
+            if (response.status === 200){
+                send_otp($('.recovery_timer'));
+                alertify.success(response.message);
+            }else {
                 alertify.error(response.message);
             }
-        },
-        error: function (response) {
+        }).fail(function () {
             stopLoading();
             show_error_messages(response);
             alertify.error('لطفا خطاهای فرم را بررسی کنید.');
-        }
+        });
+    }).fail(function () {
+        stopLoading();
+        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+    });
+});
+
+$('.confirm_recovery_code').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+    let confirm_code = $('.recovery_code_input').val();
+    getGroupCookies(['notifier_username', 'recovery_type']).done(function (data) {
+        confirmRecoveryCode(data.cookies.notifier_username,
+            confirm_code, data.cookies.recovery_type)
+            .done(function (code_result) {
+            hide_error_messages();
+            if (code_result.status === 200){
+                window.location = code_result.url;
+            }else {
+                alertify.error(code_result.message);
+                stopLoading();
+            }
+        }).fail(function (response) {
+            stopLoading();
+            show_error_messages(response);
+            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+        });
+    }).fail(function () {
+        stopLoading();
+        alertify.error('خطای غیره منتظره‌ای رخ داده.');
     });
 });
 
@@ -80,6 +132,38 @@ function openRecoveryPage(current_page,previous_page) {
         stopLoading();
         if (response.status === 200){
             change_url('','','/auth/recovery');
+            slide_element(previous_page, current_page);
+        }else {
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
+    }).fail(function () {
+        stopLoading();
+        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+    });
+}
+
+function openPasswordPage(current_page,previous_page) {
+    setGroupCookies({'notifier_current_page': current_page,
+        'notifier_previous_page': previous_page}).done(function (response) {
+        stopLoading();
+        if (response.status === 200){
+            change_url('','','/auth/password');
+            slide_element(previous_page, current_page);
+        }else {
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
+    }).fail(function () {
+        stopLoading();
+        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+    });
+}
+
+function openRecoveryCodePage(current_page,previous_page) {
+    setGroupCookies({'notifier_current_page': current_page,
+        'notifier_previous_page': previous_page}).done(function (response) {
+        stopLoading();
+        if (response.status === 200){
+            change_url('','','/auth/recovery_code');
             slide_element(previous_page, current_page);
         }else {
             alertify.error('خطای غیره منتظره‌ای رخ داده.');
@@ -437,6 +521,30 @@ function confirmCode(mobile,code) {
         data: {
             'mobile': mobile,
             'code': code
+        }
+    });
+}
+
+function confirmRecoveryCode(username,code,type) {
+    return $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/confirm/recovery',
+        dataType: 'json',
+        data: {
+            'username': username,
+            'code': code,
+            'type': type
+        }
+    });
+}
+
+function sendEmail(username_input) {
+    return $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/check/username',
+        dataType: 'json',
+        data: {
+            'username': username_input
         }
     });
 }

@@ -97,7 +97,7 @@ class LoginController extends Controller
         }
         if (NotifierLoginFacade::isEmail($request->username)){
             $type = 'email';
-            $result = NotifierLoginFacade::sendEmail($request->username);
+            $result = NotifierLoginFacade::sendConfirmEmail($request->username);
         }
         if ($type == 'undefined'){
             $result = array();
@@ -115,12 +115,19 @@ class LoginController extends Controller
     {
         $request->validate([
             'username' => ['required', 'string'],
-            'code' => ['required']
+            'code' => ['required'],
+            'type' => ['required', 'in:email,mobile']
         ],[
-            'username.required' => 'فیلد شماره موبایل یا ایمیل الزامی است.',
-            'code.required' => 'فیلد کد تایید الزامی است.'
+            'username.required' => 'فیلد نام کاربری الزامی است.',
+            'code.required' => 'فیلد کد تایید الزامی است.',
+            'type.required' => 'فیلد نوع بازیابی الزامی است.',
         ]);
-
+        if ($type == 'mobile'){
+            $result = NotifierLoginFacade::confirmSMS($request->username, $request->code, 'recovery_mode');
+        }
+        if ($type == 'email'){
+            $result = NotifierLoginFacade::sendConfirmEmail($request->username);
+        }
         return json_encode([
             'status' => $result->status,
             'message' => $result->message,
