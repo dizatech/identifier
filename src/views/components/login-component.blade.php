@@ -214,13 +214,19 @@
                         <div class="form-group">
                             <span class="recovery_pass_span">رمز جدید خود را وارد کنید</span>
                             <input type="text" class="form-control username-field recovery_new_password" value=""
-                                   name="recovery_new_password">
+                                   name="new_password">
                             <span class="tip">رمز انتخابی شما برای قوی&zwnj;تر شدن، باید شامل یکی از حروف (a تا z) و بیش از 6 کاراکتر باشد.</span>
+                            <span class="invalid-feedback mt-4 d-none">
+                                <strong></strong>
+                            </span>
                         </div>
                         <div class="form-group">
                             <span class="recovery_pass_span">رمز جدید خود را یک بار دیگر وارد کنید</span>
                             <input type="text" class="form-control username-field recovery_new_password_confirm" value=""
-                                   name="recovery_new_password_confirm">
+                                   name="password_confirm">
+                            <span class="invalid-feedback mt-4 d-none">
+                                <strong></strong>
+                            </span>
                         </div>
                         <div class="row">
                             <div class="col-md-12 text-center">

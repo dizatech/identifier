@@ -145,10 +145,17 @@ $('.change_password_btn').on('click', function (e) {
             'password_confirm': confirm_new_pass
         },
         success: function (response) {
-            
+            if (response.status === 200){
+                window.location = response.url;
+            }else {
+                alertify.error(response.message);
+                stopLoading();
+            }
         },
         error: function (response) {
-            
+            stopLoading();
+            show_error_messages(response);
+            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
         }
     });
 });

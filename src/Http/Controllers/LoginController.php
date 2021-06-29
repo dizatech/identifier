@@ -4,6 +4,7 @@ namespace Dizatech\Identifier\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Dizatech\Identifier\Facades\NotifierLoginFacade;
+use Dizatech\Identifier\Http\Requests\ChangePasswordRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -146,16 +147,38 @@ class LoginController extends Controller
         ]);
     }
 
-    public function changePassword(Request $request)
+    public function changePassword(ChangePasswordRequest $request)
     {
-        $request->validate([
-            'username' => ['required', 'string'],
-            'code' => ['required'],
-            'type' => ['required', 'in:email,mobile']
-        ],[
-            'username.required' => 'فیلد نام کاربری الزامی است.',
-            'code.required' => 'فیلد کد تایید الزامی است.',
-            'type.required' => 'فیلد نوع بازیابی الزامی است.',
+        if (\request()->cookie('identifier_verified_recovery') != 'user_verified'
+            && is_null(\request()->cookie('notifier_username'))
+            && is_null(\request()->cookie('notifier_recovery_type')))
+        {
+            return redirect(route('identifier.login'));
+        }
+        $type = \request()->cookie('notifier_recovery_type');
+        $username = \request()->cookie('notifier_username');
+        $url = '';
+        $result = (object) array();
+        if ($type == 'mobile'){
+            $result = NotifierLoginFacade::changePasswordViaMobile($request->username, $request->new_password);
+        }
+        if ($type == 'email'){
+            $result = NotifierLoginFacade::changePasswordViaEmail($request->username, $request->new_password);
+        }
+        if (empty($result) || is_null($result)){
+            $result->status = 400;
+            $result->message = 'کاربر پیدا نشد.';
+        }else{
+            if ($result->user->is_admin == 1){
+                $url = route(config('dizatech_identifier.admin_login_redirect'));
+            }else{
+                $url = route(config('dizatech_identifier.user_login_redirect'));
+            }
+        }
+        return json_encode([
+            'status' => $result->status,
+            'message' => $result->message,
+            'url' => $url
         ]);
     }
 

@@ -47,8 +47,8 @@ class SendPasswordEmail extends Notification
             ->theme((app()->getLocale() == 'fa') ? 'rtl-theme' : 'default')
             ->greeting('با سلام و عرض ادب')
             ->salutation('اراتمند شما وبسایت ' . config('dizatech_identifier.site_title'))
-            ->subject('رمزعبور حساب کاربری')
-            ->line('لطفا برای ورود به حساب کاربری خود، از رمز زیر استفاده نمایید')
+            ->subject('کد یکبارمصرف حساب کاربری')
+            ->line('لطفا برای تغییر رمزعبور حساب کاربری خود، از کد زیر استفاده نمایید')
             ->line($this->password);
     }
 

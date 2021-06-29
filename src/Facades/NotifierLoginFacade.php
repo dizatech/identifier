@@ -14,6 +14,8 @@ namespace Dizatech\Identifier\Facades;
  * @method static array isMobile()
  * @method static array sendConfirmEmail()
  * @method static array confirmEmail()
+ * @method static array changePasswordViaMobile()
+ * @method static array changePasswordViaEmail()
  *
  * @see \Dizatech\Identifier\Repositories\NotifierLoginRepository
  */

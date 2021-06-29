@@ -13,7 +13,7 @@ Route::group([
     Route::post('/logout', 'LoginController@logout')->name('identifier.logout');
     Route::post('/check/username', 'LoginController@checkUsername')->name('identifier.check.username')->middleware('guest');
     Route::post('/confirm/recovery', 'LoginController@confirmRecoveryCode')->name('identifier.confirm.recovery.code')->middleware('guest');
-    Route::post('/change/password', 'LoginController@confirmRecoveryCode')->name('identifier.confirm.recovery.code')->middleware('guest');
+    Route::post('/change/password', 'LoginController@changePassword')->name('identifier.change.password')->middleware('guest');
 
     Route::post('/set/cookie', 'LoginController@setCookie')->name('identifier.set.cookie')->middleware('guest');
     Route::post('/set/group/cookies', 'LoginController@setCookies')->name('identifier.set.group.cookies')->middleware('guest');

@@ -3,10 +3,12 @@
 
 namespace Dizatech\Identifier\Repositories;
 
+use App\Models\User;
 use Carbon\Carbon;
 use Dizatech\Identifier\Models\NotifierOtpCode;
 use Dizatech\Identifier\Notifications\Email\SendPasswordEmail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class NotifierLoginRepository
 {
@@ -168,6 +170,52 @@ class NotifierLoginRepository
         }
     }
 
+    public function changePasswordViaMobile($username, $new_password)
+    {
+        $checkUser = $this->existUserMobile($username);
+        dd($checkUser);
+        if ($checkUser->status == 200){
+            $this->updateUserPassword($new_password,$checkUser->user);
+            dd($checkUser->user);
+            $this->attempLogin($checkUser->user);
+            return (object) [
+                'user' => $checkUser->user,
+                'status' => 200,
+                'message' => 'رمزعبور باموفقیت تغییر کرد.'
+            ];
+        }else{
+            return (object) [
+                'status' => 400,
+                'message' => 'کاربر پیدا نشد.'
+            ];
+        }
+    }
+
+    public function changePasswordViaEmail($username, $new_password)
+    {
+        $checkUser = $this->existUserEmail($username);
+        if ($checkUser->status == 200){
+            $this->updateUserPassword($new_password,$checkUser->user);
+            $this->attempLogin($checkUser->user);
+            return (object) [
+                'user' => $checkUser->user,
+                'status' => 200,
+                'message' => 'رمزعبور باموفقیت تغییر کرد.'
+            ];
+        }else{
+            return (object) [
+                'status' => 400,
+                'message' => 'کاربر پیدا نشد.'
+            ];
+        }
+    }
+
+    protected function updateUserPassword($password,User $user)
+    {
+        $user->password = Hash::make($password);
+        $user->save();
+    }
+
     protected function createOrExistUser($mobile)
     {
         $user_object = $this->user()::query()->where('mobile', '=', $mobile);
@@ -205,6 +253,7 @@ class NotifierLoginRepository
 
     protected function existUserMobile($mobile)
     {
+        dd($mobile);
         $user_object = $this->user()::query()->where('mobile', '=', $mobile);
         if ($user_object->count() > 0){
             return (object) [
