@@ -18,6 +18,7 @@ require('lity/dist/lity.min');
 
 require('jquery-ui/ui/effects/effect-slide');
 
+var page_type = '';
 $(function () {
     var url = window.location.href.replace(/\/$/, '');
     page_type = url.substring(url.lastIndexOf('/') + 1);
@@ -423,7 +424,7 @@ $('.back-btn').on('click', function (e) {
     startLoading();
     getGroupCookies(['notifier_current_page',
         'notifier_previous_page']).done(function (cookies_result) {
-        if (cookies_result.cookies.notifier_current_page == 'default'){
+        if (cookies_result.cookies.notifier_current_page == 'default' || page_type == 'default'){
             window.location = '/';
         }else {
             change_url('', '', cookies_result.cookies.notifier_previous_page);
