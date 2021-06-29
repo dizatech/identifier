@@ -52,7 +52,7 @@ $('.forget_action').on('click', function (e) {
         if (response.status === 200){
             setGroupCookies({
                 'notifier_username': username_input,
-                'recovery_type': response.type
+                'notifier_recovery_type': response.type
             }).done(function (data) {
                 if (response.status === 200){
                     $('.user_info').html('('+ username_input +')');
@@ -104,13 +104,18 @@ $('.confirm_recovery_code').on('click', function (e) {
     e.preventDefault();
     startLoading();
     let confirm_code = $('.recovery_code_input').val();
-    getGroupCookies(['notifier_username', 'recovery_type']).done(function (data) {
+    getGroupCookies(['notifier_username', 'notifier_recovery_type']).done(function (data) {
         confirmRecoveryCode(data.cookies.notifier_username,
-            confirm_code, data.cookies.recovery_type)
+            confirm_code, data.cookies.notifier_recovery_type)
             .done(function (code_result) {
             hide_error_messages();
             if (code_result.status === 200){
-                window.location = code_result.url;
+                setCookie('identifier_verified_recovery', 'user_verified').done(function () {
+                    openChangePasswordPage('change_password', 'recovery_code');
+                }).fail(function () {
+                    stopLoading();
+                    alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                });
             }else {
                 alertify.error(code_result.message);
                 stopLoading();
@@ -164,6 +169,22 @@ function openRecoveryCodePage(current_page,previous_page) {
         stopLoading();
         if (response.status === 200){
             change_url('','','/auth/recovery_code');
+            slide_element(previous_page, current_page);
+        }else {
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
+    }).fail(function () {
+        stopLoading();
+        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+    });
+}
+
+function openChangePasswordPage(current_page,previous_page) {
+    setGroupCookies({'notifier_current_page': current_page,
+        'notifier_previous_page': previous_page}).done(function (response) {
+        stopLoading();
+        if (response.status === 200){
+            change_url('','','/auth/change_password');
             slide_element(previous_page, current_page);
         }else {
             alertify.error('خطای غیره منتظره‌ای رخ داده.');

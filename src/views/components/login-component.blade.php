@@ -203,6 +203,14 @@
                         </div>
                     </div>
                     @break
+                    @case('change_password')
+                    <div class="segment">
+                        <a href="#" class="not_registered_button create_new_account">
+                            لطفا رمز جدیدی را انتخاب و آن را وارد کنید
+                        </a>
+                    </div>
+
+                    @break
                 @endswitch
             </div>
         </div>

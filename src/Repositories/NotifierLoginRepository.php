@@ -137,39 +137,34 @@ class NotifierLoginRepository
 
     public function confirmEmail($email, $code)
     {
-        if (!is_null($recovery_mode)){
-            $checkUser = $this->existUserMobile($mobile);
-            if ($checkUser->status != 200){
-                return [
-                    'status' => $checkUser->status,
-                    'message' => $checkUser->message
+        $checkUser = $this->existUserEmail($email);
+        if ($checkUser->status == 200){
+            $code_status = $this->checkIfOtpLogExpired($code,$checkUser->user->mobile,$checkUser->user);
+            if ($code_status == 'not_expired'){
+                $this->verifyUser($checkUser->user);
+                return (object) [
+                    'status' => 200,
+                    'message' => 'کد باموفقیت تایید شد.',
+                    'user' => $checkUser->user
                 ];
             }else{
-                $user = $checkUser->user;
+                if ($code_status == 'not_valid'){
+                    return (object) [
+                        'status' => 400,
+                        'message' => 'کد وارد شده معتبر نیست.'
+                    ];
+                }else{
+                    return (object) [
+                        'status' => 400,
+                        'message' => 'کد وارد شده منقضی شده است.'
+                    ];
+                }
             }
         }else{
-            $user = $this->createOrExistUser($mobile);
-        }
-        $code_status = $this->checkIfOtpLogExpired($code,$user->mobile,$user);
-        if ($code_status == 'not_expired'){
-            $this->verifyUser($user);
             return (object) [
-                'status' => 200,
-                'message' => 'کد باموفقیت تایید شد.',
-                'user' => $user
+                'status' => 400,
+                'message' => 'کاربر پیدا نشد.'
             ];
-        }else{
-            if ($code_status == 'not_valid'){
-                return (object) [
-                    'status' => 400,
-                    'message' => 'کد وارد شده معتبر نیست.'
-                ];
-            }else{
-                return (object) [
-                    'status' => 400,
-                    'message' => 'کد وارد شده منقضی شده است.'
-                ];
-            }
         }
     }
 

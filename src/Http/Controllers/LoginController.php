@@ -17,6 +17,13 @@ class LoginController extends Controller
             is_null(\request()->cookie('notifier_username'))){
             return redirect(route('identifier.login'));
         }
+        // check cookie , in change_password page
+        if ($page == 'change_password'){
+            if (\request()->cookie('identifier_verified_recovery') != 'user_verified')
+            {
+                return redirect(route('identifier.login'));
+            }
+        }
         return view('vendor.dizatech-identifier.identifier', [
             'page' => $page
         ]);
@@ -122,11 +129,16 @@ class LoginController extends Controller
             'code.required' => 'فیلد کد تایید الزامی است.',
             'type.required' => 'فیلد نوع بازیابی الزامی است.',
         ]);
-        if ($type == 'mobile'){
+        $result = (object) array();
+        if ($request->type == 'mobile'){
             $result = NotifierLoginFacade::confirmSMS($request->username, $request->code, 'recovery_mode');
         }
-        if ($type == 'email'){
-            $result = NotifierLoginFacade::sendConfirmEmail($request->username);
+        if ($request->type == 'email'){
+            $result = NotifierLoginFacade::confirmEmail($request->username, $request->code);
+        }
+        if (empty($result)){
+            $result->status = 400;
+            $result->message = 'کاربر پیدا نشد.';
         }
         return json_encode([
             'status' => $result->status,

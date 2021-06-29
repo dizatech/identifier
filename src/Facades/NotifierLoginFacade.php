@@ -13,6 +13,7 @@ namespace Dizatech\Identifier\Facades;
  * @method static array isEmail()
  * @method static array isMobile()
  * @method static array sendConfirmEmail()
+ * @method static array confirmEmail()
  *
  * @see \Dizatech\Identifier\Repositories\NotifierLoginRepository
  */

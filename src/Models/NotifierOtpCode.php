@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class NotifierOtpCode extends Model
 {
     use HasFactory;
-    protected $fillable = ['code','user_id','expires_at','is_expired'];
+    protected $fillable = ['code','user_id','expired_at','is_expired'];
 }
