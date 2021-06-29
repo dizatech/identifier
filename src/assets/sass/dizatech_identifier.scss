@@ -251,3 +251,83 @@ body {
     display: inline-block;
     vertical-align: middle;
 }
+
+/*
+   start golestan changes
+ */
+
+.animate-btn  {
+    position: relative;
+    padding: 0;
+    border: 0;
+    span {
+        z-index: 2;
+        font-size: 1rem;
+        display: inline-block;
+        &.text{
+            padding: .6rem 1rem;
+        }
+        &.fa{
+            min-width: 38px;
+            text-align: center;
+        }
+    }
+    &:hover{
+        .overlay{
+            width: 100%;
+            transition: .5s ease;
+        }
+    }
+    .overlay{
+        position: absolute;
+        left: 0;
+        right: auto;
+        bottom: 0;
+        height: 100%;
+        width: 38px;
+        background-color: rgba($primary , 0.07);
+        transition: .5s ease;
+        z-index: 0;
+    }
+}
+.group-input-holder, .animate-btn  {
+    @media screen and (max-width: 768px){
+        margin-top: 0.625rem;
+    }
+}
+.segment {
+    .segment-content {
+        display: flex;
+        justify-content: space-between;
+        @media screen and (max-width: 768px){
+            flex-direction: column;
+        }
+        .fa-display, .overlay {
+            @media screen and (max-width: 1200px){
+                display: none;
+            }
+        }
+    }
+    .form-group {
+        .group {
+            display: flex;
+            justify-content: space-between;
+        }
+        .group-input-holder {
+            display: flex;
+            width: 80%;
+            @media screen and (max-width: 768px){
+                width: 100%;
+            }
+        }
+        .timer-register {
+            display: flex;
+            align-items: center;
+            margin-top: 0.625rem;
+        }
+    }
+}
+
+/*
+   end golestan changes
+ */

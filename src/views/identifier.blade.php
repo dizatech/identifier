@@ -22,7 +22,7 @@
 <div id="app">
     <div class="container">
         <div class="row">
-            <div class="col-md-6 mx-auto main-container">
+            <div class="col-lg-6 col-md-8 mx-auto main-container">
                 <div class="loading_overlay justify-content-center align-items-center d-none">
                     <div class="text-center loading_content">
                         <div class="spinner-border text-danger" role="status">
