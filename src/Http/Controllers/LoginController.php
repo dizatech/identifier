@@ -146,6 +146,19 @@ class LoginController extends Controller
         ]);
     }
 
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'username' => ['required', 'string'],
+            'code' => ['required'],
+            'type' => ['required', 'in:email,mobile']
+        ],[
+            'username.required' => 'فیلد نام کاربری الزامی است.',
+            'code.required' => 'فیلد کد تایید الزامی است.',
+            'type.required' => 'فیلد نوع بازیابی الزامی است.',
+        ]);
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

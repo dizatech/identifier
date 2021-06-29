@@ -205,11 +205,31 @@
                     @break
                     @case('change_password')
                     <div class="segment">
-                        <a href="#" class="not_registered_button create_new_account">
+                        <p class="font-weight-bold">
                             لطفا رمز جدیدی را انتخاب و آن را وارد کنید
-                        </a>
+                        </p>
                     </div>
+                    <div class="segment">
 
+                        <div class="form-group">
+                            <span class="recovery_pass_span">رمز جدید خود را وارد کنید</span>
+                            <input type="text" class="form-control username-field recovery_new_password" value=""
+                                   name="recovery_new_password">
+                            <span class="tip">رمز انتخابی شما برای قوی&zwnj;تر شدن، باید شامل یکی از حروف (a تا z) و بیش از 6 کاراکتر باشد.</span>
+                        </div>
+                        <div class="form-group">
+                            <span class="recovery_pass_span">رمز جدید خود را یک بار دیگر وارد کنید</span>
+                            <input type="text" class="form-control username-field recovery_new_password_confirm" value=""
+                                   name="recovery_new_password_confirm">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <a href="#" class="change_password_btn d-inline-block">
+                                    تغییر رمز
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     @break
                 @endswitch
             </div>

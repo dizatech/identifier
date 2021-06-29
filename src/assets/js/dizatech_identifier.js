@@ -131,6 +131,28 @@ $('.confirm_recovery_code').on('click', function (e) {
     });
 });
 
+$('.change_password_btn').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+    let new_pass = $('.recovery_new_password').val();
+    let confirm_new_pass = $('.recovery_new_password_confirm').val();
+    $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/change/password',
+        dataType: 'json',
+        data: {
+            'new_password': new_pass,
+            'password_confirm': confirm_new_pass
+        },
+        success: function (response) {
+            
+        },
+        error: function (response) {
+            
+        }
+    });
+});
+
 function openRecoveryPage(current_page,previous_page) {
     setGroupCookies({'notifier_current_page': current_page,
         'notifier_previous_page': previous_page}).done(function (response) {
