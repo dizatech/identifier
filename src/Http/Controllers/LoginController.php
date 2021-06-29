@@ -160,10 +160,10 @@ class LoginController extends Controller
         $url = '';
         $result = (object) array();
         if ($type == 'mobile'){
-            $result = NotifierLoginFacade::changePasswordViaMobile($request->username, $request->new_password);
+            $result = NotifierLoginFacade::changePasswordViaMobile($username, $request->new_password);
         }
         if ($type == 'email'){
-            $result = NotifierLoginFacade::changePasswordViaEmail($request->username, $request->new_password);
+            $result = NotifierLoginFacade::changePasswordViaEmail($username, $request->new_password);
         }
         if (empty($result) || is_null($result)){
             $result->status = 400;

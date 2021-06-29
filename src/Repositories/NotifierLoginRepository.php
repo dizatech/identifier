@@ -173,10 +173,8 @@ class NotifierLoginRepository
     public function changePasswordViaMobile($username, $new_password)
     {
         $checkUser = $this->existUserMobile($username);
-        dd($checkUser);
         if ($checkUser->status == 200){
             $this->updateUserPassword($new_password,$checkUser->user);
-            dd($checkUser->user);
             $this->attempLogin($checkUser->user);
             return (object) [
                 'user' => $checkUser->user,
@@ -253,7 +251,6 @@ class NotifierLoginRepository
 
     protected function existUserMobile($mobile)
     {
-        dd($mobile);
         $user_object = $this->user()::query()->where('mobile', '=', $mobile);
         if ($user_object->count() > 0){
             return (object) [
