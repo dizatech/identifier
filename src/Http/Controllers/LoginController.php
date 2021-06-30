@@ -3,26 +3,29 @@
 namespace Dizatech\Identifier\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Dizatech\Identifier\Facades\NotifierLoginFacade;
+use Dizatech\Identifier\Facades\IdentifierLoginFacade;
 use Dizatech\Identifier\Http\Requests\ChangePasswordRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function show($page = 'default')
+    public function show($page = null)
     {
         if ($page != 'default' &&
             $page != 'register' &&
             $page != 'recovery' &&
-            is_null(\request()->cookie('notifier_username'))){
-            return redirect(route('identifier.login'));
+            is_null(\request()->cookie('Identifier_username'))){
+            return redirect(url('/auth/default'));
+        }
+        if (is_null($page)){
+            return redirect(url('/auth/default'));
         }
         // check cookie , in change_password page
         if ($page == 'change_password'){
             if (\request()->cookie('identifier_verified_recovery') != 'user_verified')
             {
-                return redirect(route('identifier.login'));
+                return redirect(url('/auth/default'));
             }
         }
         return view('vendor.dizatech-identifier.identifier', [
@@ -37,7 +40,7 @@ class LoginController extends Controller
         ],[
             'mobile.required' => 'فیلد موبایل الزامی است.'
         ]);
-        $result = NotifierLoginFacade::sendSMS($request->mobile);
+        $result = IdentifierLoginFacade::sendSMS($request->mobile);
         return json_encode([
             'status' => $result['status'],
             'message' => $result['message']
@@ -54,9 +57,9 @@ class LoginController extends Controller
             'code.required' => 'فیلد کد تایید الزامی است.'
         ]);
         $url = '';
-        $result = NotifierLoginFacade::confirmSMS($request->mobile, $request->code);
+        $result = IdentifierLoginFacade::confirmSMS($request->mobile, $request->code);
         if ($result->status == 200){
-            $attempLogin = NotifierLoginFacade::attempLogin($result->user);
+            $attempLogin = IdentifierLoginFacade::attempLogin($result->user);
             if ($attempLogin->status == 200){
                 if ($result->user->is_admin == 1){
                     $url = route(config('dizatech_identifier.admin_login_redirect'));
@@ -84,7 +87,7 @@ class LoginController extends Controller
         ],[
             'mobile.required' => 'فیلد موبایل الزامی است.'
         ]);
-        $result = NotifierLoginFacade::checkMobileExist($request->mobile);
+        $result = IdentifierLoginFacade::checkMobileExist($request->mobile);
         return json_encode([
             'type' => $result,
         ]);
@@ -99,13 +102,13 @@ class LoginController extends Controller
         ]);
         $type = 'undefined';
         $message = '';
-        if (NotifierLoginFacade::isMobile($request->username)){
+        if (IdentifierLoginFacade::isMobile($request->username)){
             $type = 'mobile';
-            $result = NotifierLoginFacade::sendSMS($request->username, 'recovery_mode');
+            $result = IdentifierLoginFacade::sendSMS($request->username, 'recovery_mode');
         }
-        if (NotifierLoginFacade::isEmail($request->username)){
+        if (IdentifierLoginFacade::isEmail($request->username)){
             $type = 'email';
-            $result = NotifierLoginFacade::sendConfirmEmail($request->username);
+            $result = IdentifierLoginFacade::sendConfirmEmail($request->username);
         }
         if ($type == 'undefined'){
             $result = array();
@@ -132,10 +135,10 @@ class LoginController extends Controller
         ]);
         $result = (object) array();
         if ($request->type == 'mobile'){
-            $result = NotifierLoginFacade::confirmSMS($request->username, $request->code, 'recovery_mode');
+            $result = IdentifierLoginFacade::confirmSMS($request->username, $request->code, 'recovery_mode');
         }
         if ($request->type == 'email'){
-            $result = NotifierLoginFacade::confirmEmail($request->username, $request->code);
+            $result = IdentifierLoginFacade::confirmEmail($request->username, $request->code);
         }
         if (empty($result)){
             $result->status = 400;
@@ -150,20 +153,20 @@ class LoginController extends Controller
     public function changePassword(ChangePasswordRequest $request)
     {
         if (\request()->cookie('identifier_verified_recovery') != 'user_verified'
-            && is_null(\request()->cookie('notifier_username'))
-            && is_null(\request()->cookie('notifier_recovery_type')))
+            && is_null(\request()->cookie('identifier_username'))
+            && is_null(\request()->cookie('identifier_recovery_type')))
         {
             return redirect(route('identifier.login'));
         }
-        $type = \request()->cookie('notifier_recovery_type');
-        $username = \request()->cookie('notifier_username');
+        $type = \request()->cookie('identifier_recovery_type');
+        $username = \request()->cookie('identifier_username');
         $url = '';
         $result = (object) array();
         if ($type == 'mobile'){
-            $result = NotifierLoginFacade::changePasswordViaMobile($username, $request->new_password);
+            $result = IdentifierLoginFacade::changePasswordViaMobile($username, $request->new_password);
         }
         if ($type == 'email'){
-            $result = NotifierLoginFacade::changePasswordViaEmail($username, $request->new_password);
+            $result = IdentifierLoginFacade::changePasswordViaEmail($username, $request->new_password);
         }
         if (empty($result) || is_null($result)){
             $result->status = 400;
@@ -187,9 +190,9 @@ class LoginController extends Controller
         $request->validate([
             'password' => ['required', 'min:6']
         ]);
-        $username = \request()->cookie('notifier_username');
+        $username = \request()->cookie('Identifier_username');
         $url = '';
-        $result = NotifierLoginFacade::loginViaPassword($username,$request->password);
+        $result = IdentifierLoginFacade::loginViaPassword($username,$request->password);
         if ($result->status == 200){
             if ($result->user->is_admin == 1){
                 $url = route(config('dizatech_identifier.admin_login_redirect'));

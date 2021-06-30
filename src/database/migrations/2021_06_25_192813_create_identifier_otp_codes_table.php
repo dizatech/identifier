@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNotifierOtpCodesTable extends Migration
+class CreateIdentifierOtpCodesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateNotifierOtpCodesTable extends Migration
      */
     public function up()
     {
-        Schema::create('notifier_otp_codes', function (Blueprint $table) {
+        Schema::create('identifier_otp_codes', function (Blueprint $table) {
             $table->id();
             $table->string('code');
             $table->bigInteger('user_id');
@@ -30,6 +30,6 @@ class CreateNotifierOtpCodesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('notifier_otp_codes');
+        Schema::dropIfExists('identifier_otp_codes');
     }
 }

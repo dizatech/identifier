@@ -18,7 +18,6 @@ require('lity/dist/lity.min');
 
 require('jquery-ui/ui/effects/effect-slide');
 
-var page_type = '';
 $(function () {
     var url = window.location.href.replace(/\/$/, '');
     page_type = url.substring(url.lastIndexOf('/') + 1);
@@ -52,8 +51,8 @@ $('.forget_action').on('click', function (e) {
     sendEmailOrSMS(username_input).done(function (response) {
         if (response.status === 200){
             setGroupCookies({
-                'notifier_username': username_input,
-                'notifier_recovery_type': response.type
+                'identifier_username': username_input,
+                'identifier_recovery_type': response.type
             }).done(function (data) {
                 if (response.status === 200){
                     $('.user_info').html('('+ username_input +')');
@@ -81,7 +80,7 @@ $('.forget_action').on('click', function (e) {
 $('.recovery_timer').on('click', function (e) {
     e.preventDefault();
     startLoading();
-    getCookie('notifier_username').done(function (data) {
+    getCookie('identifier_username').done(function (data) {
         sendEmailOrSMS(data.cookie).done(function (response) {
             stopLoading();
             if (response.status === 200){
@@ -105,9 +104,9 @@ $('.confirm_recovery_code').on('click', function (e) {
     e.preventDefault();
     startLoading();
     let confirm_code = $('.recovery_code_input').val();
-    getGroupCookies(['notifier_username', 'notifier_recovery_type']).done(function (data) {
-        confirmRecoveryCode(data.cookies.notifier_username,
-            confirm_code, data.cookies.notifier_recovery_type)
+    getGroupCookies(['identifier_username', 'identifier_recovery_type']).done(function (data) {
+        confirmRecoveryCode(data.cookies.identifier_username,
+            confirm_code, data.cookies.identifier_recovery_type)
             .done(function (code_result) {
             hide_error_messages();
             if (code_result.status === 200){
@@ -162,8 +161,8 @@ $('.change_password_btn').on('click', function (e) {
 });
 
 function openRecoveryPage(current_page,previous_page) {
-    setGroupCookies({'notifier_current_page': current_page,
-        'notifier_previous_page': previous_page}).done(function (response) {
+    setGroupCookies({'identifier_current_page': current_page,
+        'identifier_previous_page': previous_page}).done(function (response) {
         stopLoading();
         if (response.status === 200){
             change_url('','','/auth/recovery');
@@ -212,8 +211,8 @@ $('.login_with_password').on('click', function (e) {
 });
 
 function openPasswordPage(current_page,previous_page) {
-    setGroupCookies({'notifier_current_page': current_page,
-        'notifier_previous_page': previous_page}).done(function (response) {
+    setGroupCookies({'identifier_current_page': current_page,
+        'identifier_previous_page': previous_page}).done(function (response) {
         stopLoading();
         if (response.status === 200){
             change_url('','','/auth/password');
@@ -228,8 +227,8 @@ function openPasswordPage(current_page,previous_page) {
 }
 
 function openRecoveryCodePage(current_page,previous_page) {
-    setGroupCookies({'notifier_current_page': current_page,
-        'notifier_previous_page': previous_page}).done(function (response) {
+    setGroupCookies({'identifier_current_page': current_page,
+        'identifier_previous_page': previous_page}).done(function (response) {
         stopLoading();
         if (response.status === 200){
             change_url('','','/auth/recovery_code');
@@ -244,8 +243,8 @@ function openRecoveryCodePage(current_page,previous_page) {
 }
 
 function openChangePasswordPage(current_page,previous_page) {
-    setGroupCookies({'notifier_current_page': current_page,
-        'notifier_previous_page': previous_page}).done(function (response) {
+    setGroupCookies({'identifier_current_page': current_page,
+        'identifier_previous_page': previous_page}).done(function (response) {
         stopLoading();
         if (response.status === 200){
             change_url('','','/auth/change_password');
@@ -263,8 +262,8 @@ function openChangePasswordPage(current_page,previous_page) {
 $('.create_account').on('click', function (e) {
     e.preventDefault();
     startLoading();
-    setGroupCookies({'notifier_current_page': 'register',
-        'notifier_previous_page': 'default'}).done(function (response) {
+    setGroupCookies({'identifier_current_page': 'register',
+        'identifier_previous_page': 'default'}).done(function (response) {
         stopLoading();
             if (response.status === 200){
                 change_url('','','/auth/register');
@@ -286,9 +285,9 @@ $('.account_login').on('click', function (e) {
         hide_error_messages();
         if (data.type === 'not_registered'){
             setGroupCookies({
-                'notifier_username': user_mobile,
-                'notifier_current_page': 'not_registered',
-                'notifier_previous_page': 'default'
+                'identifier_username': user_mobile,
+                'identifier_current_page': 'not_registered',
+                'identifier_previous_page': 'default'
             }).done(function (response) {
                 stopLoading();
                 if (response.status === 200){
@@ -327,9 +326,9 @@ function send_code_handler(mobile_num, current_page, previous_page) {
             alertify.success(code_result.message);
             $('.mobile_num').html('(' + mobile_num + ')');
             setGroupCookies({
-                'notifier_username': mobile_num,
-                'notifier_current_page': current_page,
-                'notifier_previous_page': previous_page
+                'identifier_username': mobile_num,
+                'identifier_current_page': current_page,
+                'identifier_previous_page': previous_page
             }).done(function (response) {
                 stopLoading();
                 if (response.status === 200){
@@ -363,7 +362,7 @@ $('.confirm_sms_code').on('click', function (e) {
     e.preventDefault();
     startLoading();
     let confirm_code = $('.user_input_code').val();
-    getCookie('notifier_username').done(function (data) {
+    getCookie('identifier_username').done(function (data) {
         confirmCode(data.cookie, confirm_code).done(function (code_result) {
             hide_error_messages();
             if (code_result.status === 200){
@@ -386,7 +385,7 @@ $('.confirm_sms_code').on('click', function (e) {
 $('.otp_timer').on('click', function (e) {
     e.preventDefault();
     startLoading();
-    getCookie('notifier_username').done(function (data) {
+    getCookie('identifier_username').done(function (data) {
         sendCode(data.cookie).done(function (code_result) {
             hide_error_messages();
             if (code_result.status === 200){
@@ -422,18 +421,18 @@ $('.create_new_account').on('click', function (e) {
 $('.back-btn').on('click', function (e) {
     e.preventDefault();
     startLoading();
-    getGroupCookies(['notifier_current_page',
-        'notifier_previous_page']).done(function (cookies_result) {
-        if (cookies_result.cookies.notifier_current_page == 'default' || page_type == 'default'){
+    getGroupCookies(['identifier_current_page',
+        'identifier_previous_page']).done(function (cookies_result) {
+        if (cookies_result.cookies.identifier_current_page == 'default'){
             window.location = '/';
         }else {
-            change_url('', '', cookies_result.cookies.notifier_previous_page);
+            change_url('', '', cookies_result.cookies.identifier_previous_page);
             setGroupCookies({
-                'notifier_previous_page': cookies_result.cookies.notifier_current_page,
-                'notifier_current_page': cookies_result.cookies.notifier_previous_page
+                'identifier_previous_page': cookies_result.cookies.identifier_current_page,
+                'identifier_current_page': cookies_result.cookies.identifier_previous_page
             }).done(function () {
-                let current_page = cookies_result.cookies.notifier_current_page;
-                let perv_page = cookies_result.cookies.notifier_previous_page;
+                let current_page = cookies_result.cookies.identifier_current_page;
+                let perv_page = cookies_result.cookies.identifier_previous_page;
                 switch (current_page) {
                     case "register":
                         back_slide_element(current_page, 'default');

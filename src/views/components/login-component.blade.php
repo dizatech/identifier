@@ -83,11 +83,11 @@
                         <div class="segment">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4 class="head-title">{{ request()->cookie('notifier_previous_page') == 'default' ? ' ورود به' : 'ثبت‌نام در ' }} {{ config('dizatech_identifier.site_title') }}</h4>
+                                    <h4 class="head-title">{{ request()->cookie('identifier_previous_page') == 'default' ? ' ورود به' : 'ثبت‌نام در ' }} {{ config('dizatech_identifier.site_title') }}</h4>
                                     <div class="">
                                         <span class="mobile-code-text">
                                             <i class="sms-icon"></i>
-                                            کد فرستاده شده برای  <span class="mobile_num">({{ request()->cookie('notifier_username') }})</span>  را وارد کنید
+                                            کد فرستاده شده برای  <span class="mobile_num">({{ request()->cookie('identifier_username') }})</span>  را وارد کنید
                                         </span>
                                     </div>
                                     <div class="form-group">
@@ -134,7 +134,7 @@
                                 <div class="col-md-12">
                                     <h4 class="head-title text-center mb-0">
                                         <span class="mobile_number">
-                                            شماره موبایل <span class="mobile_num">{{ request()->cookie('notifier_username') }}</span> در {{ config('dizatech_identifier.site_title') }} ثبت نشده
+                                            شماره موبایل <span class="mobile_num">{{ request()->cookie('identifier_username') }}</span> در {{ config('dizatech_identifier.site_title') }} ثبت نشده
                                         </span>
                                     </h4>
                                 </div>
@@ -143,7 +143,7 @@
                         <input type="hidden" name="not_registered_mobile" class="not_registered_mobile" value="">
                         <div class="segment">
                             <a href="#" class="not_registered_button create_new_account">
-                                ساخت حساب کاربری جدید با <span class="mobile_num">{{ request()->cookie('notifier_username') }}</span>
+                                ساخت حساب کاربری جدید با <span class="mobile_num">{{ request()->cookie('identifier_username') }}</span>
                             </a>
                         </div>
                         <div class="segment">
@@ -190,7 +190,7 @@
                                 <h4 class="head-title">بازیابی رمزعبور</h4>
                                 <div class="mb-4">
                                         <span class="mobile-code-text">
-                                            کد فرستاده شده برای  <span class="user_info">({{ request()->cookie('notifier_username') }})</span>  را وارد کنید
+                                            کد فرستاده شده برای  <span class="user_info">({{ request()->cookie('identifier_username') }})</span>  را وارد کنید
                                         </span>
                                 </div>
                                 <div class="form-group">

@@ -5,12 +5,12 @@ namespace Dizatech\Identifier\Repositories;
 
 use App\Models\User;
 use Carbon\Carbon;
-use Dizatech\Identifier\Models\NotifierOtpCode;
+use Dizatech\Identifier\Models\IdentifierOtpCode;
 use Dizatech\Identifier\Notifications\Email\SendPasswordEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class NotifierLoginRepository
+class IdentifierLoginRepository
 {
     protected function user()
     {
@@ -174,10 +174,10 @@ class NotifierLoginRepository
     protected function forgetAllCookies()
     {
         $this->forgetCookie(\request()->cookie('identifier_verified_recovery'));
-        $this->forgetCookie(\request()->cookie('notifier_username'));
-        $this->forgetCookie(\request()->cookie('notifier_recovery_type'));
-        $this->forgetCookie(\request()->cookie('notifier_previous_page'));
-        $this->forgetCookie(\request()->cookie('notifier_current_page'));
+        $this->forgetCookie(\request()->cookie('identifier_username'));
+        $this->forgetCookie(\request()->cookie('identifier_recovery_type'));
+        $this->forgetCookie(\request()->cookie('identifier_previous_page'));
+        $this->forgetCookie(\request()->cookie('identifier_current_page'));
     }
 
     public function changePasswordViaMobile($username, $new_password)
@@ -335,7 +335,7 @@ class NotifierLoginRepository
     protected function newOtpLog($otp_pass,$user_id)
     {
         $this->makeExpireLastOtpLog($user_id);
-        NotifierOtpCode::query()->create([
+        IdentifierOtpCode::query()->create([
             'code' => $otp_pass,
             'user_id' => $user_id,
             'expired_at' => Carbon::now()->addMinutes(2),
@@ -375,7 +375,7 @@ class NotifierLoginRepository
     {
         $last_otp_code = $this->getLastOtp($user_id);
         if (!is_null($last_otp_code) || !empty($last_otp_code)){
-            NotifierOtpCode::query()->where('id', '=', $last_otp_code->id)
+            IdentifierOtpCode::query()->where('id', '=', $last_otp_code->id)
                 ->update([
                     'is_expired' => 'yes'
                     ]);
@@ -384,7 +384,7 @@ class NotifierLoginRepository
 
     protected function getLastOtp($user_id)
     {
-        return NotifierOtpCode::query()
+        return IdentifierOtpCode::query()
             ->where('user_id','=', $user_id)
             ->latest()->first();
     }
@@ -392,7 +392,7 @@ class NotifierLoginRepository
     protected function getOtpLog($otp_code,$mobile)
     {
         $user = $this->createOrExistUser($mobile);
-        return NotifierOtpCode::query()
+        return IdentifierOtpCode::query()
             ->where('user_id','=', $user->id)
             ->where('code', '=', $otp_code)
             ->first();

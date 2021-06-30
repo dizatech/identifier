@@ -4,7 +4,7 @@
 namespace Dizatech\Identifier\Facades;
 
 /**
- * @class \Dizatech\Identifier\Facades\NotifierLoginFacade
+ * @class \Dizatech\Identifier\Facades\IdentifierLoginFacade
  *
  * @method static array sendSMS()
  * @method static array confirmSMS()
@@ -18,10 +18,10 @@ namespace Dizatech\Identifier\Facades;
  * @method static array changePasswordViaEmail()
  * @method static array loginViaPassword()
  *
- * @see \Dizatech\Identifier\Repositories\NotifierLoginRepository
+ * @see \Dizatech\Identifier\Repositories\IdentifierLoginRepository
  */
 
-class NotifierLoginFacade extends BaseFacade
+class IdentifierLoginFacade extends BaseFacade
 {
 
 }
