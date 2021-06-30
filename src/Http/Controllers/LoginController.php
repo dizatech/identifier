@@ -12,21 +12,8 @@ class LoginController extends Controller
 {
     public function show($page = null)
     {
-        if ($page != 'default' &&
-            $page != 'register' &&
-            $page != 'recovery' &&
-            is_null(\request()->cookie('identifier_username'))){
+        if ($page != 'default'){
             return redirect(url('/auth/default'));
-        }
-        if (is_null($page)){
-            return redirect(url('/auth/default'));
-        }
-        // check cookie , in change_password page
-        if ($page == 'change_password'){
-            if (\request()->cookie('identifier_verified_recovery') != 'user_verified')
-            {
-                return redirect(url('/auth/default'));
-            }
         }
         return view('vendor.dizatech-identifier.identifier', [
             'page' => $page

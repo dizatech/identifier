@@ -18,29 +18,16 @@ require('lity/dist/lity.min');
 
 require('jquery-ui/ui/effects/effect-slide');
 
-$(function () {
-    var url = window.location.href.replace(/\/$/, '');
-    page_type = url.substring(url.lastIndexOf('/') + 1);
-    if (typeof page_type != 'undefined'){
-        if(page_type === 'code'){
-            send_otp($('.otp_timer'));
-        }
-        if(page_type === 'recovery_code'){
-            send_otp($('.recovery_timer'));
-        }
-    }
-});
+const previous_pages = [];
 
 // forgot password handler
 $('.open_recovery_not_reg').on('click', function (e) {
     e.preventDefault();
-    startLoading();
     openRecoveryPage('recovery', 'not_registered');
 });
 
 $('.open_recovery').on('click', function (e) {
     e.preventDefault();
-    startLoading();
     openRecoveryPage('recovery', 'default');
 });
 
@@ -161,26 +148,14 @@ $('.change_password_btn').on('click', function (e) {
 });
 
 function openRecoveryPage(current_page,previous_page) {
-    setGroupCookies({'identifier_current_page': current_page,
-        'identifier_previous_page': previous_page}).done(function (response) {
-        stopLoading();
-        if (response.status === 200){
-            change_url('','','/auth/recovery');
-            slide_element(previous_page, current_page);
-        }else {
-            alertify.error('خطای غیره منتظره‌ای رخ داده.');
-        }
-    }).fail(function () {
-        stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
-    });
+    change_url('','','/auth/recovery');
+    slide_element(previous_page, current_page);
+    previous_pages.push(previous_page);
 }
 
 $('.login_via_password').on('click', function (e) {
     e.preventDefault();
-    startLoading();
     openPasswordPage('password', 'code');
-    stopLoading();
 });
 
 $('.login_with_password').on('click', function (e) {
@@ -211,19 +186,9 @@ $('.login_with_password').on('click', function (e) {
 });
 
 function openPasswordPage(current_page,previous_page) {
-    setGroupCookies({'identifier_current_page': current_page,
-        'identifier_previous_page': previous_page}).done(function (response) {
-        stopLoading();
-        if (response.status === 200){
-            change_url('','','/auth/password');
-            slide_element(previous_page, current_page);
-        }else {
-            alertify.error('خطای غیره منتظره‌ای رخ داده.');
-        }
-    }).fail(function () {
-        stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
-    });
+    change_url('','','/auth/password');
+    slide_element(previous_page, current_page);
+    previous_pages.push(previous_page);
 }
 
 function openRecoveryCodePage(current_page,previous_page) {
@@ -261,20 +226,9 @@ function openChangePasswordPage(current_page,previous_page) {
 // login and register handler
 $('.create_account').on('click', function (e) {
     e.preventDefault();
-    startLoading();
-    setGroupCookies({'identifier_current_page': 'register',
-        'identifier_previous_page': 'default'}).done(function (response) {
-        stopLoading();
-            if (response.status === 200){
-                change_url('','','/auth/register');
-                slide_element('default', 'register');
-            }else {
-                alertify.error('خطای غیره منتظره‌ای رخ داده.');
-            }
-    }).fail(function () {
-        stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
-    });
+    change_url('','','/auth/register');
+    slide_element('default', 'register');
+    previous_pages.push('default');
 });
 
 $('.account_login').on('click', function (e) {
@@ -284,24 +238,12 @@ $('.account_login').on('click', function (e) {
     checkUser(user_mobile).done(function (data) {
         hide_error_messages();
         if (data.type === 'not_registered'){
-            setGroupCookies({
-                'identifier_username': user_mobile,
-                'identifier_current_page': 'not_registered',
-                'identifier_previous_page': 'default'
-            }).done(function (response) {
-                stopLoading();
-                if (response.status === 200){
-                    $('.mobile_num').html(user_mobile);
-                    $('.not_registered_mobile').val(user_mobile);
-                    change_url('','','/auth/not_registered');
-                    slide_element('default', 'not_registered');
-                }else {
-                    alertify.error('خطای غیره منتظره‌ای رخ داده.');
-                }
-            }).fail(function () {
-                stopLoading();
-                alertify.error('خطای غیره منتظره‌ای رخ داده.');
-            });
+            $('.mobile_num').html(user_mobile);
+            $('.not_registered_mobile').val(user_mobile);
+            change_url('','','/auth/not_registered');
+            slide_element('default', 'not_registered');
+            previous_pages.push('default');
+            stopLoading();
         }else {
             send_code_handler(user_mobile, 'code', 'default');
         }
@@ -325,22 +267,10 @@ function send_code_handler(mobile_num, current_page, previous_page) {
             send_otp($('.otp_timer'));
             alertify.success(code_result.message);
             $('.mobile_num').html('(' + mobile_num + ')');
-            setGroupCookies({
-                'identifier_username': mobile_num,
-                'identifier_current_page': current_page,
-                'identifier_previous_page': previous_page
-            }).done(function (response) {
-                stopLoading();
-                if (response.status === 200){
-                    change_url('','','/auth/code');
-                    slide_element(previous_page, current_page);
-                }else {
-                    alertify.error('خطای غیره منتظره‌ای رخ داده.');
-                }
-            }).fail(function () {
-                stopLoading();
-                alertify.error('خطای غیره منتظره‌ای رخ داده.');
-            });
+            stopLoading();
+            change_url('','','/auth/code');
+            slide_element(previous_page, current_page);
+            previous_pages.push(previous_page);
         }else {
             stopLoading();
             alertify.error(code_result.message);
@@ -362,23 +292,19 @@ $('.confirm_sms_code').on('click', function (e) {
     e.preventDefault();
     startLoading();
     let confirm_code = $('.user_input_code').val();
-    getCookie('identifier_username').done(function (data) {
-        confirmCode(data.cookie, confirm_code).done(function (code_result) {
-            hide_error_messages();
-            if (code_result.status === 200){
-                window.location = code_result.url;
-            }else {
-                alertify.error(code_result.message);
-                stopLoading();
-            }
-        }).fail(function (response) {
+    let mobile = $('.username_input').val();
+    confirmCode(mobile, confirm_code).done(function (code_result) {
+        hide_error_messages();
+        if (code_result.status === 200){
+            window.location = code_result.url;
+        }else {
+            alertify.error(code_result.message);
             stopLoading();
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
-        });
-    }).fail(function () {
+        }
+    }).fail(function (response) {
         stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        show_error_messages(response);
+        alertify.error('لطفا خطاهای فرم را بررسی کنید.');
     });
 });
 
@@ -418,47 +344,20 @@ $('.create_new_account').on('click', function (e) {
     send_code_handler(mobile_num,'code', 'not_registered');
 });
 
+let perv_page = '';
+var url = '';
 $('.back-btn').on('click', function (e) {
     e.preventDefault();
-    startLoading();
-    getGroupCookies(['identifier_current_page',
-        'identifier_previous_page']).done(function (cookies_result) {
-        if (cookies_result.cookies.identifier_current_page == 'default'){
-            window.location = '/';
-        }else {
-            change_url('', '', cookies_result.cookies.identifier_previous_page);
-            setGroupCookies({
-                'identifier_previous_page': cookies_result.cookies.identifier_current_page,
-                'identifier_current_page': cookies_result.cookies.identifier_previous_page
-            }).done(function () {
-                let current_page = cookies_result.cookies.identifier_current_page;
-                let perv_page = cookies_result.cookies.identifier_previous_page;
-                switch (current_page) {
-                    case "register":
-                        back_slide_element(current_page, 'default');
-                        break;
-                    case "not_registered":
-                        back_slide_element(current_page, 'default');
-                        break;
-                    case "recovery":
-                        back_slide_element(current_page, 'default');
-                        break;
-                    case "recovery_code":
-                        back_slide_element(current_page, 'recovery');
-                        break;
-                    default:
-                        back_slide_element(current_page, perv_page);
-                }
-                stopLoading();
-            }).fail(function () {
-                stopLoading();
-                alertify.error('خطای غیره منتظره‌ای رخ داده.');
-            });
-        }
-    }).fail(function () {
-        stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
-    });
+    url = window.location.href.replace(/\/$/, '');
+    page_type = url.substring(url.lastIndexOf('/') + 1);
+    if (page_type === 'default'){
+        window.location = '/';
+    }else {
+        perv_page = previous_pages.pop();
+        change_url('','','/auth/' + perv_page);
+        back_slide_element(page_type, perv_page);
+        hide_error_messages();
+    }
 });
 
 // start helper functions
