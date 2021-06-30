@@ -15,7 +15,7 @@ class LoginController extends Controller
         if ($page != 'default' &&
             $page != 'register' &&
             $page != 'recovery' &&
-            is_null(\request()->cookie('Identifier_username'))){
+            is_null(\request()->cookie('identifier_username'))){
             return redirect(url('/auth/default'));
         }
         if (is_null($page)){
