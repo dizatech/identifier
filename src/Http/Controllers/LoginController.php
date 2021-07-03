@@ -177,7 +177,7 @@ class LoginController extends Controller
         $request->validate([
             'password' => ['required', 'min:6']
         ]);
-        $username = \request()->cookie('Identifier_username');
+        $username = \request()->cookie('identifier_username');
         $url = '';
         $result = IdentifierLoginFacade::loginViaPassword($username,$request->password);
         if ($result->status == 200){

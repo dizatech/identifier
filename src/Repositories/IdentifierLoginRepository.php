@@ -118,6 +118,7 @@ class IdentifierLoginRepository
         if ($code_status == 'not_expired'){
             $this->verifyUser($user);
             $this->forgetAllCookies();
+            $this->makeExpireLastOtpLog($user->id);
             return (object) [
                 'status' => 200,
                 'message' => 'کد باموفقیت تایید شد.',
@@ -176,8 +177,6 @@ class IdentifierLoginRepository
         $this->forgetCookie(\request()->cookie('identifier_verified_recovery'));
         $this->forgetCookie(\request()->cookie('identifier_username'));
         $this->forgetCookie(\request()->cookie('identifier_recovery_type'));
-        $this->forgetCookie(\request()->cookie('identifier_previous_page'));
-        $this->forgetCookie(\request()->cookie('identifier_current_page'));
     }
 
     public function changePasswordViaMobile($username, $new_password)
@@ -187,6 +186,7 @@ class IdentifierLoginRepository
             $this->updateUserPassword($new_password,$checkUser->user);
             $this->attempLogin($checkUser->user);
             $this->forgetAllCookies();
+            $this->makeExpireLastOtpLog($checkUser->user->id);
             return (object) [
                 'user' => $checkUser->user,
                 'status' => 200,
@@ -207,6 +207,7 @@ class IdentifierLoginRepository
             $this->updateUserPassword($new_password,$checkUser->user);
             $this->attempLogin($checkUser->user);
             $this->forgetAllCookies();
+            $this->makeExpireLastOtpLog($checkUser->user->id);
             return (object) [
                 'user' => $checkUser->user,
                 'status' => 200,
