@@ -192,35 +192,16 @@ function openPasswordPage(current_page,previous_page) {
 }
 
 function openRecoveryCodePage(current_page,previous_page) {
-    setGroupCookies({'identifier_current_page': current_page,
-        'identifier_previous_page': previous_page}).done(function (response) {
-        stopLoading();
-        if (response.status === 200){
-            change_url('','','/auth/recovery_code');
-            slide_element(previous_page, current_page);
-        }else {
-            alertify.error('خطای غیره منتظره‌ای رخ داده.');
-        }
-    }).fail(function () {
-        stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
-    });
+    change_url('','','/auth/recovery_code');
+    slide_element(previous_page, current_page);
+    previous_pages.push(previous_page);
 }
 
 function openChangePasswordPage(current_page,previous_page) {
-    setGroupCookies({'identifier_current_page': current_page,
-        'identifier_previous_page': previous_page}).done(function (response) {
-        stopLoading();
-        if (response.status === 200){
-            change_url('','','/auth/change_password');
-            slide_element(previous_page, current_page);
-        }else {
-            alertify.error('خطای غیره منتظره‌ای رخ داده.');
-        }
-    }).fail(function () {
-        stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
-    });
+    change_url('','','/auth/change_password');
+    slide_element(previous_page, current_page);
+    previous_pages.push(previous_page);
+    stopLoading();
 }
 
 // login and register handler
@@ -555,6 +536,7 @@ function send_otp(target) {
     var min=2;
     var sec=0;
     target.find('.otp_timer_text').html('<span class="minutes">2</span>' + ':' + '<span class="seconds">0</span>');
+    clearInterval(interval);
     start_count_down(min,sec,target);
 }
 
