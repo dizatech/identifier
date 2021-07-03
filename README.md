@@ -37,3 +37,73 @@ php artisan migrate
 #### <g-emoji class="g-emoji" alias="book" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4d6.png">📖</g-emoji> How to change auth options
 
 - Set the configs in /config/dizatech_identifier.php
+
+## Usage
+
+- Create resources/sass/auth.scss file and add the following code :
+
+```scss
+// Fonts
+@import './fonts/awesome/awesome-font.css';
+@import './fonts/iransans/iransans-font.css';
+
+@import "./vendor/dizatech-identifier/dizatech_identifier";
+```
+
+* Please note that fonts directories is up to your project structure. change them with your own directories.
+
+- Create resources/js/auth.js file and add the following code :
+
+```js
+require('./bootstrap');
+
+require("./vendor/dizatech-identifier/dizatech_identifier");
+```
+
+- Add created files directly in your webpack.mix.js
+
+```bash
+.js('resources/js/auth.js', 'public/js')
+    .sass('resources/sass/auth.scss', 'public/css')
+```
+
+- run npm :
+
+```bash
+npm run dev
+```
+
+- Use this route to redirect your users to login and registration page
+
+```php
+route('identifier.login');
+```
+
+- Change `app/Http/Middleware/Authenticate.php` like this :
+
+```php
+protected function redirectTo($request)
+{
+    if (! $request->expectsJson()) {
+        return route('identifier.login');
+    }
+}
+```
+
+- Clear caches
+
+```bash
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+php artisan config:clear
+```
+
+- Done !
+
+###Requirements :
+
+- PHP v7.0 or above
+- Laravel v7.0 or above
+- dizatech/notifier package [packagist link](https://packagist.org/packages/dizatech/notifier)
+- va/cutlet-helper package [packagist link](https://packagist.org/packages/va/cutlet-helper)
