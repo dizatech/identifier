@@ -273,7 +273,7 @@ $('.confirm_sms_code').on('click', function (e) {
     e.preventDefault();
     startLoading();
     let confirm_code = $('.user_input_code').val();
-    let mobile = $('.username_input').val();
+    let mobile = $('.register_mobile').val();
     confirmCode(mobile, confirm_code).done(function (code_result) {
         hide_error_messages();
         if (code_result.status === 200){
