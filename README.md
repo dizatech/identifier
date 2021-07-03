@@ -1,5 +1,5 @@
 # Laravel Identifier Package :: simple authentication
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/identifier/transaction.svg?style=flat-square)](https://packagist.org/packages/dizatech/identifier)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/dizatech/identifier.svg?style=flat-square)](https://packagist.org/packages/dizatech/identifier)
 [![GitHub issues](https://img.shields.io/github/issues/dizatech/identifier?style=flat-square)](https://github.com/dizatech/identifier/issues)
 [![GitHub stars](https://img.shields.io/github/stars/dizatech/identifier?style=flat-square)](https://github.com/dizatech/identifier/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/dizatech/identifier?style=flat-square)](https://github.com/dizatech/identifier/network)
