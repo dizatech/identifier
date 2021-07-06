@@ -23,6 +23,9 @@ return [
     // this config used to set witch mothod is availabe for users to login
     'login_methods' => ['username','email','mobile'],
 
+    // OTP codes digit, by default it's 6-digit (secure and standard)
+    'otp_digit' => 6,
+
     // User Model class path
     'user_model' => \App\Models\User::class
 ];

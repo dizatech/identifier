@@ -216,9 +216,9 @@ $('.account_login').on('click', function (e) {
     e.preventDefault();
     startLoading();
     var user_mobile = $('.username_input').val();
-    setCookie('identifier_username', user_mobile).done(function () {
-        checkUser(user_mobile).done(function (data) {
-            hide_error_messages();
+    checkUser(user_mobile).done(function (data) {
+        hide_error_messages();
+        setCookie('identifier_username', user_mobile).done(function () {
             if (data.type === 'not_registered'){
                 $('.mobile_num').html(user_mobile);
                 $('.not_registered_mobile').val(user_mobile);
@@ -229,14 +229,14 @@ $('.account_login').on('click', function (e) {
             }else {
                 send_code_handler(user_mobile, 'code', 'default');
             }
-        }).fail(function (response) {
+        }).fail(function () {
             stopLoading();
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
         });
-    }).fail(function () {
+    }).fail(function (response) {
         stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        show_error_messages(response);
+        alertify.error('لطفا خطاهای فرم را بررسی کنید.');
     });
 });
 
@@ -248,8 +248,8 @@ $('.code_step').on('click', function (e) {
 });
 
 function send_code_handler(mobile_num, current_page, previous_page) {
-    setCookie('identifier_username', mobile_num).done(function () {
-        sendCode(mobile_num).done(function (code_result) {
+    sendCode(mobile_num).done(function (code_result) {
+        setCookie('identifier_username', mobile_num).done(function () {
             if (code_result.status === 200){
                 send_otp($('.otp_timer'));
                 alertify.success(code_result.message);
@@ -262,20 +262,20 @@ function send_code_handler(mobile_num, current_page, previous_page) {
                 stopLoading();
                 alertify.error(code_result.message);
             }
-        }).fail(function (response) {
+        }).fail(function () {
             stopLoading();
-            let msg = '';
-            if (response.status === 500){
-                msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
-            }else {
-                show_error_messages(response);
-                msg = 'لطفا خطاهای فرم را بررسی کنید.';
-            }
-            alertify.error(msg);
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
         });
-    }).fail(function () {
+    }).fail(function (response) {
         stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        let msg = '';
+        if (response.status === 500){
+            msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
+        }else {
+            show_error_messages(response);
+            msg = 'لطفا خطاهای فرم را بررسی کنید.';
+        }
+        alertify.error(msg);
     });
 }
 
@@ -312,6 +312,7 @@ $('.otp_timer').on('click', function (e) {
         sendCode(data.cookie).done(function (code_result) {
             hide_error_messages();
             if (code_result.status === 200){
+                send_otp($('.otp_timer'));
                 alertify.success(code_result.message);
             }else {
                 alertify.error(code_result.message);

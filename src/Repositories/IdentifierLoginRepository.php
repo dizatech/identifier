@@ -330,7 +330,8 @@ class IdentifierLoginRepository
 
     protected function generateOTP()
     {
-        return stringToken(6,'0123456789');
+        $length = config('dizatech_identifier.otp_digit');
+        return stringToken($length,'0123456789');
     }
 
     protected function newOtpLog($otp_pass,$user_id)
