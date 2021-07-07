@@ -80,6 +80,39 @@ class LoginController extends Controller
         ]);
     }
 
+    public function checkRegisteredUser(Request $request)
+    {
+        $request->validate([
+            'username_input' => ['required', 'string']
+        ],[
+            'username_input.required' => 'فیلد موبایل یا ایمیل الزامی است.'
+        ]);
+        $type = 'undefined';
+        $message = '';
+        $result = array();
+        $registration_status = 'not_registered';
+        $result['status'] = 200;
+        $result['message'] = 'Success';
+        if (IdentifierLoginFacade::isMobile($request->username_input)){
+            $type = 'mobile';
+            $registration_status = IdentifierLoginFacade::checkMobileExist($request->username_input);
+        }
+        if (IdentifierLoginFacade::isEmail($request->username_input)){
+            $type = 'email';
+            $registration_status = IdentifierLoginFacade::checkEmailExist($request->username_input);
+        }
+        if ($type == 'undefined'){
+            $result['status'] = 404;
+            $result['message'] = 'تنها ایمیل یا موبایل قابل قبول است.';
+        }
+        return json_encode([
+            'type' => $type,
+            'registeration_status' => $registration_status,
+            'status' => $result['status'],
+            'message' => $result['message']
+        ]);
+    }
+
     public function checkUsername(Request $request)
     {
         $request->validate([
@@ -134,6 +167,37 @@ class LoginController extends Controller
         return json_encode([
             'status' => $result->status,
             'message' => $result->message,
+        ]);
+    }
+
+    public function confirmEmailCode(Request $request)
+    {
+        $request->validate([
+            'username' => ['required', 'email'],
+            'code' => ['required']
+        ],[
+            'username.required' => 'فیلد نام کاربری الزامی است.',
+            'username.email' => 'تنها ایمیل مورد قبول است.',
+            'code.required' => 'فیلد کد تایید الزامی است.',
+        ]);
+        $result = (object) array();
+        $url = '';
+        $result = IdentifierLoginFacade::confirmEmail($request->username, $request->code);
+        if (empty($result)){
+            $result->status = 400;
+            $result->message = 'کاربر پیدا نشد.';
+        }elseif ($result->status == 200){
+            $result = IdentifierLoginFacade::loginViaEmail($request->username, $request->code);
+            if ($result->user->is_admin == 1){
+                $url = route(config('dizatech_identifier.admin_login_redirect'));
+            }else{
+                $url = route(config('dizatech_identifier.user_login_redirect'));
+            }
+        }
+        return json_encode([
+            'status' => $result->status,
+            'message' => $result->message,
+            'url' => $url
         ]);
     }
 

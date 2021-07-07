@@ -27,7 +27,7 @@
                                                 </span>
                                                 </div>
                                                 <input type="text" class="form-control username-field username_input" value=""
-                                                       name="mobile" id="username" placeholder="موبایل">
+                                                       name="username_input" id="username" placeholder="موبایل یا ایمیل">
                                             </div>
                                             <a type="button" class="btn btn-warning animate-btn account_login" href="#">
                                                 <span class="text">ورود</span>
@@ -280,6 +280,54 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    @break
+                    @case('email_code')
+                    <div class="segment">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="head-title">ورود با ایمیل</h4>
+                                <div class="mb-4">
+                                        <span class="mobile-code-text">
+                                            کد فرستاده شده برای  <span class="user_info">({{ request()->cookie('identifier_username') }})</span>  را وارد کنید
+                                        </span>
+                                </div>
+                                <div class="form-group">
+                                    <div class="group segment-content">
+                                        <div class="group-input-holder">
+                                            <input type="text" class="form-control username-field email_code_input" value=""
+                                                   name="code" placeholder="کد تایید">
+                                        </div>
+                                        <a type="button" class="btn btn-warning animate-btn confirm_email_code" href="#">
+                                            <span class="text">تایید</span>
+                                            <span class="fa fa-check fa-fw fa-display"></span>
+                                            <div class="overlay"></div>
+                                        </a>
+                                    </div>
+                                    <span class="invalid-feedback mt-4 d-none">
+                                        <strong></strong>
+                                    </span>
+                                    <div class="timer-register">
+                                        <span>
+                                            زمان باقیمانده
+                                        </span>
+                                        <button class='btn btn-sm btn-info float-right text-center mr-2 recovery_timer' disabled>
+                                                <span class='d-flex justfy-content-between align-items-center flex-row-reverse otp_timer_text'>
+                                                    <span class="minutes">2</span>
+                                                    :
+                                                    <span class="seconds">0</span>
+                                                </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="segment">
+                        <a href="#" class="login_via_password">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="lock-icon" width="512" height="512" viewBox="0 0 535.5 535.5"><path d="M420.75 178.5h-25.5v-51c0-71.4-56.1-127.5-127.5-127.5s-127.5 56.1-127.5 127.5v51h-25.5c-28.05 0-51 22.95-51 51v255c0 28.05 22.95 51 51 51h306c28.05 0 51-22.95 51-51v-255c0-28.05-22.95-51-51-51zm-153-130.05c43.35 0 79.05 35.7 79.05 79.05v51H191.25v-51h-2.55c0-43.35 35.7-79.05 79.05-79.05zm153 436.05h-306v-255h306v255zm-153-76.5c28.05 0 51-22.95 51-51s-22.95-51-51-51-51 22.95-51 51 22.95 51 51 51z"></path></svg>
+                            می‌خواهم با رمز عبور وارد شوم
+                        </a>
                     </div>
                     @break
                 @endswitch

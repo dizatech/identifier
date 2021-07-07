@@ -200,6 +200,26 @@ class IdentifierLoginRepository
         }
     }
 
+    public function loginViaEmail()
+    {
+        $checkUser = $this->existUserEmail($username);
+        if ($checkUser->status == 200){
+            $this->attempLogin($checkUser->user);
+            $this->forgetAllCookies();
+            $this->makeExpireLastOtpLog($checkUser->user->id);
+            return (object) [
+                'user' => $checkUser->user,
+                'status' => 200,
+                'message' => 'باموفقیت وارد شدید.'
+            ];
+        }else{
+            return (object) [
+                'status' => 400,
+                'message' => 'کاربر پیدا نشد.'
+            ];
+        }
+    }
+
     public function changePasswordViaEmail($username, $new_password)
     {
         $checkUser = $this->existUserEmail($username);
@@ -410,6 +430,17 @@ class IdentifierLoginRepository
     {
         $user_object = $this->user()::query()
             ->where('mobile', '=', $mobile)->where('email_verified_at', '!=', null);
+        if ($user_object->count() > 0){
+            return 'registered';
+        }else{
+            return 'not_registered';
+        }
+    }
+
+    public function checkEmailExist($email)
+    {
+        $user_object = $this->user()::query()
+            ->where('email', '=', $email)->where('email_verified_at', '!=', null);
         if ($user_object->count() > 0){
             return 'registered';
         }else{

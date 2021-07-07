@@ -16,6 +16,9 @@ Route::group([
     Route::post('/change/password', 'LoginController@changePassword')->name('identifier.change.password')->middleware('guest');
     Route::post('/login/password', 'LoginController@loginWithPassword')->name('identifier.login.password')->middleware('guest');
 
+    Route::post('/check/registered/user', 'LoginController@checkRegisteredUser')->name('identifier.check.registered.user')->middleware('guest');
+    Route::post('/confirm/email/code', 'LoginController@confirmEmailCode')->name('identifier.confirm.email.code')->middleware('guest');
+
     Route::post('/set/cookie', 'LoginController@setCookie')->name('identifier.set.cookie')->middleware('guest');
     Route::post('/set/group/cookies', 'LoginController@setCookies')->name('identifier.set.group.cookies')->middleware('guest');
     Route::post('/get/cookie', 'LoginController@getCookie')->name('identifier.get.cookie')->middleware('guest');

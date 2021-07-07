@@ -215,28 +215,67 @@ $('.create_account').on('click', function (e) {
 $('.account_login').on('click', function (e) {
     e.preventDefault();
     startLoading();
-    var user_mobile = $('.username_input').val();
-    checkUser(user_mobile).done(function (data) {
+    var username = $('.username_input').val();
+    alreadyRegisteredUsername(username).done(function (data) {
         hide_error_messages();
-        setCookie('identifier_username', user_mobile).done(function () {
-            if (data.type === 'not_registered'){
-                $('.mobile_num').html(user_mobile);
-                $('.not_registered_mobile').val(user_mobile);
-                change_url('','','/auth/not_registered');
-                slide_element('default', 'not_registered');
-                previous_pages.push('default');
+        if (data.status === 200){
+            setCookie('identifier_username', username).done(function () {
+                if (data.registeration_status === 'not_registered'){
+                    if (data.type === 'mobile'){
+                        $('.mobile_num').html(username);
+                        $('.not_registered_mobile').val(username);
+                        change_url('','','/auth/not_registered');
+                        slide_element('default', 'not_registered');
+                        previous_pages.push('default');
+                    }else {
+                        alertify.error('این ایمیل درسیستم ثبت نشده.');
+                    }
+                    stopLoading();
+                }else {
+                    previous_pages.push('default');
+                    if (data.type === 'mobile'){
+                        send_code_handler(username, 'code', 'default');
+                    }else {
+                        send_email_handler(username, 'email_code', 'default');
+                    }
+                }
+            }).fail(function () {
                 stopLoading();
-            }else {
-                send_code_handler(user_mobile, 'code', 'default');
-            }
-        }).fail(function () {
+                alertify.error('خطای غیره منتظره‌ای رخ داده.');
+            });
+        }else {
             stopLoading();
-            alertify.error('خطای غیره منتظره‌ای رخ داده.');
-        });
+            alertify.error(data.message);
+        }
     }).fail(function (response) {
         stopLoading();
         show_error_messages(response);
         alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+    });
+});
+
+$('.confirm_email_code').on('click', function (e) {
+    e.preventDefault();
+    startLoading();
+    let confirm_code = $('.email_code_input').val();
+    getCookie('identifier_username').done(function (data) {
+        confirmEmailCode(data.identifier_username, confirm_code)
+            .done(function (code_result) {
+                hide_error_messages();
+                if (code_result.status === 200){
+                    window.location = code_result.url;
+                }else {
+                    alertify.error(code_result.message);
+                    stopLoading();
+                }
+            }).fail(function (response) {
+            stopLoading();
+            show_error_messages(response);
+            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+        });
+    }).fail(function (data) {
+        stopLoading();
+        alertify.error('خطای غیره منتظره‌ای رخ داده.');
     });
 });
 
@@ -246,6 +285,31 @@ $('.code_step').on('click', function (e) {
     let mobile_num = $('.register_mobile').val();
     send_code_handler(mobile_num,'code', 'register');
 });
+
+function send_email_handler(username, current_page, previous_page) {
+    sendEmailOrSMS(username).done(function (response) {
+        if (response.status === 200){
+            $('.user_info').html('('+ username_input +')');
+            send_otp($('.recovery_timer'));
+            alertify.success(response.message);
+            slide_element(previous_page, current_page);
+            stopLoading();
+        }else {
+            stopLoading();
+            alertify.error(response.message);
+        }
+    }).fail(function (response) {
+        stopLoading();
+        let msg = '';
+        if (response.status === 500){
+            msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
+        }else {
+            show_error_messages(response);
+            msg = 'خطای غیره منتظره‌ای رخ داده.';
+        }
+        alertify.error(msg);
+    });
+}
 
 function send_code_handler(mobile_num, current_page, previous_page) {
     sendCode(mobile_num).done(function (code_result) {
@@ -441,6 +505,17 @@ function checkUser(mobile_field) {
     });
 }
 
+function alreadyRegisteredUsername(user_field) {
+    return $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/check/registered/user',
+        dataType: 'json',
+        data: {
+            'username_input': user_field
+        }
+    });
+}
+
 function setCookie(cookieName,cookieValue) {
     return $.ajax({
         type: "post",
@@ -521,6 +596,18 @@ function confirmRecoveryCode(username,code,type) {
             'username': username,
             'code': code,
             'type': type
+        }
+    });
+}
+
+function confirmEmailCode(username,code) {
+    return $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/confirm/email/code',
+        dataType: 'json',
+        data: {
+            'username': username,
+            'code': code
         }
     });
 }
