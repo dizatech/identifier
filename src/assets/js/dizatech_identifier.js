@@ -158,6 +158,11 @@ $('.login_via_password').on('click', function (e) {
     openPasswordPage('password', 'code');
 });
 
+$('.login_email_via_password').on('click', function (e) {
+    e.preventDefault();
+    openPasswordPage('password', 'email_code');
+});
+
 $('.login_with_password').on('click', function (e) {
     e.preventDefault();
     startLoading();
@@ -232,7 +237,6 @@ $('.account_login').on('click', function (e) {
                     }
                     stopLoading();
                 }else {
-                    previous_pages.push('default');
                     if (data.type === 'mobile'){
                         send_code_handler(username, 'code', 'default');
                     }else {
@@ -259,7 +263,7 @@ $('.confirm_email_code').on('click', function (e) {
     startLoading();
     let confirm_code = $('.email_code_input').val();
     getCookie('identifier_username').done(function (data) {
-        confirmEmailCode(data.identifier_username, confirm_code)
+        confirmEmailCode(data.cookie, confirm_code)
             .done(function (code_result) {
                 hide_error_messages();
                 if (code_result.status === 200){
@@ -289,10 +293,12 @@ $('.code_step').on('click', function (e) {
 function send_email_handler(username, current_page, previous_page) {
     sendEmailOrSMS(username).done(function (response) {
         if (response.status === 200){
-            $('.user_info').html('('+ username_input +')');
+            $('.user_info').html('('+ username +')');
             send_otp($('.recovery_timer'));
             alertify.success(response.message);
+            change_url('','','/auth/' + current_page);
             slide_element(previous_page, current_page);
+            previous_pages.push(previous_page);
             stopLoading();
         }else {
             stopLoading();
@@ -302,7 +308,7 @@ function send_email_handler(username, current_page, previous_page) {
         stopLoading();
         let msg = '';
         if (response.status === 500){
-            msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
+            msg = 'خطایی در ارسال ایمیل رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
         }else {
             show_error_messages(response);
             msg = 'خطای غیره منتظره‌ای رخ داده.';

@@ -200,7 +200,7 @@ class IdentifierLoginRepository
         }
     }
 
-    public function loginViaEmail()
+    public function loginViaEmail($username)
     {
         $checkUser = $this->existUserEmail($username);
         if ($checkUser->status == 200){
@@ -249,13 +249,19 @@ class IdentifierLoginRepository
 
     public function loginViaPassword($username, $password)
     {
+        $type = 'mobile';
         $checkUser = $this->existUserMobile($username);
+        if ($checkUser->status == 404){
+            $checkUser = $this->existUserEmail($username);
+            $type = 'email';
+        }
         if ($checkUser->status == 200){
             if(Auth::attempt([
-                'mobile' => $username,
+                $type => $username,
                 'password' => $password
             ])){
                 $this->forgetAllCookies();
+                $this->makeExpireLastOtpLog($checkUser->user->id);
                 return (object) [
                     'user' => $checkUser->user,
                     'status' => 200,
@@ -383,10 +389,14 @@ class IdentifierLoginRepository
     {
         $otp = $this->getLastOtp($user->id);
         if (!is_null($otp)){
-            if (Carbon::now()->toDateTimeString() > $otp->expired_at){
+            if ($otp->is_expired == 'yes'){
                 return 'expired';
             }else{
-                return 'not_expired';
+                if (Carbon::now()->toDateTimeString() > $otp->expired_at){
+                    return 'expired';
+                }else{
+                    return 'not_expired';
+                }
             }
         }else{
             return 'expired';

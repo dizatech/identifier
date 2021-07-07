@@ -187,7 +187,7 @@ class LoginController extends Controller
             $result->status = 400;
             $result->message = 'کاربر پیدا نشد.';
         }elseif ($result->status == 200){
-            $result = IdentifierLoginFacade::loginViaEmail($request->username, $request->code);
+            $result = IdentifierLoginFacade::loginViaEmail($request->username);
             if ($result->user->is_admin == 1){
                 $url = route(config('dizatech_identifier.admin_login_redirect'));
             }else{
