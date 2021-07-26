@@ -20,6 +20,7 @@ class IdentifierLoginRepository
 
     public function sendSMS($mobile, $recovery_mode = null)
     {
+        $otp_code = $this->generateOTP();
         if (!is_null($recovery_mode)){
             $checkUser = $this->existUserMobile($mobile);
             if ($checkUser->status != 200){
@@ -31,10 +32,10 @@ class IdentifierLoginRepository
                 $user = $checkUser->user;
             }
         }else{
-            $user = $this->createOrExistUser($mobile);
+            $user = $this->createOrExistUser($mobile, $otp_code);
         }
         if ($this->checkIfLastOtpLogExpired($user) == 'expired'){
-            $this->sendCode($user,'1', $this->generateOTP());
+            $this->sendCode($user,'1', $otp_code);
             return [
                 'status' => 200,
                 'message' => 'پیامک کد برایتان ارسال شد.'
@@ -112,7 +113,7 @@ class IdentifierLoginRepository
                 $user = $checkUser->user;
             }
         }else{
-            $user = $this->createOrExistUser($mobile);
+            $user = $this->createOrExistUser($mobile, $code);
         }
         $code_status = $this->checkIfOtpLogExpired($code,$user->mobile,$user);
         if ($code_status == 'not_expired'){
@@ -291,7 +292,7 @@ class IdentifierLoginRepository
         ]);
     }
 
-    protected function createOrExistUser($mobile)
+    protected function createOrExistUser($mobile, $otp_code = null)
     {
         $user_object = $this->user()::query()->where('mobile', '=', $mobile);
         if ($user_object->count() > 0){
@@ -304,7 +305,7 @@ class IdentifierLoginRepository
                 'two_factor_status' => 'off',
                 'user_type' => 'other'
             ]);
-            $user_object->password = bcrypt(stringToken(8));
+            $user_object->password = bcrypt($otp_code);
             $user_object->save();
             return $user_object;
         }
@@ -423,7 +424,7 @@ class IdentifierLoginRepository
 
     protected function getOtpLog($otp_code,$mobile)
     {
-        $user = $this->createOrExistUser($mobile);
+        $user = $this->createOrExistUser($mobile, $otp_code);
         return IdentifierOtpCode::query()
             ->where('user_id','=', $user->id)
             ->where('code', '=', $otp_code)

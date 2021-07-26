@@ -238,9 +238,6 @@ class LoginController extends Controller
 
     public function loginWithPassword(Request $request)
     {
-        $request->validate([
-            'password' => ['required', 'min:6']
-        ]);
         $username = \request()->cookie('identifier_username');
         $url = '';
         $result = IdentifierLoginFacade::loginViaPassword($username,$request->password);
