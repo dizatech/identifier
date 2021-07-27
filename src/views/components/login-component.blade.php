@@ -83,7 +83,7 @@
                         <div class="segment">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h4 class="head-title">{{ request()->cookie('identifier_previous_page') == 'default' ? ' ورود به' : 'ثبت‌نام در ' }} {{ config('dizatech_identifier.site_title') }}</h4>
+                                <h4 class="head-title">ثبت‌نام در / ورود به {{ config('dizatech_identifier.site_title') }} </h4>
                                     <div class="">
                                         <span class="mobile-code-text">
                                             <i class="sms-icon"></i>
@@ -280,6 +280,12 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="segment">
+                        <a href="#" class="login_via_code">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="lock-icon" width="512" height="512" viewBox="0 0 535.5 535.5"><path d="M420.75 178.5h-25.5v-51c0-71.4-56.1-127.5-127.5-127.5s-127.5 56.1-127.5 127.5v51h-25.5c-28.05 0-51 22.95-51 51v255c0 28.05 22.95 51 51 51h306c28.05 0 51-22.95 51-51v-255c0-28.05-22.95-51-51-51zm-153-130.05c43.35 0 79.05 35.7 79.05 79.05v51H191.25v-51h-2.55c0-43.35 35.7-79.05 79.05-79.05zm153 436.05h-306v-255h306v255zm-153-76.5c28.05 0 51-22.95 51-51s-22.95-51-51-51-51 22.95-51 51 22.95 51 51 51z"></path></svg>
+                            می‌خواهم با رمز یکبار مصرف وارد شوم
+                        </a>
                     </div>
                     @break
                     @case('email_code')

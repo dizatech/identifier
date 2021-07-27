@@ -158,6 +158,11 @@ $('.login_via_password').on('click', function (e) {
     openPasswordPage('password', 'code');
 });
 
+$('.login_via_code').on('click', function (e) {
+    e.preventDefault();
+    openCodePage('code', 'password');
+});
+
 $('.login_email_via_password').on('click', function (e) {
     e.preventDefault();
     openPasswordPage('password', 'email_code');
@@ -195,6 +200,20 @@ function openPasswordPage(current_page,previous_page) {
     slide_element(previous_page, current_page);
     previous_pages.push(previous_page);
 }
+
+function openCodePage(current_page,previous_page) {
+    getGroupCookies(['identifier_username', 'identifier_recovery_type']).done(function (data) {
+        if (data.cookies.identifier_recovery_type === 'mobile'){
+            send_code_handler(data.cookies.identifier_username, 'code', previous_page);
+        }else {
+            send_email_handler(data.cookies.identifier_username, 'email_code', previous_page);
+        }
+    }).fail(function () {
+        stopLoading();
+        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+    });
+}
+
 
 function openRecoveryCodePage(current_page,previous_page) {
     change_url('','','/auth/recovery_code');
@@ -237,11 +256,16 @@ $('.account_login').on('click', function (e) {
                     }
                     stopLoading();
                 }else {
-                    if (data.type === 'mobile'){
-                        send_code_handler(username, 'code', 'default');
-                    }else {
-                        send_email_handler(username, 'email_code', 'default');
-                    }
+                    setGroupCookies({
+                        'identifier_username': username,
+                        'identifier_recovery_type': data.type
+                    }).done(function () {
+                        openPasswordPage('password', 'default');
+                        stopLoading();
+                    }).fail(function () {
+                        stopLoading();
+                        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                    });
                 }
             }).fail(function () {
                 stopLoading();
