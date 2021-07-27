@@ -160,7 +160,7 @@ $('.login_via_password').on('click', function (e) {
 
 $('.login_via_code').on('click', function (e) {
     e.preventDefault();
-    openCodePage('code', 'password');
+    openCodePage('password');
 });
 
 $('.login_email_via_password').on('click', function (e) {
@@ -201,7 +201,8 @@ function openPasswordPage(current_page,previous_page) {
     previous_pages.push(previous_page);
 }
 
-function openCodePage(current_page,previous_page) {
+function openCodePage(previous_page) {
+    startLoading();
     getGroupCookies(['identifier_username', 'identifier_recovery_type']).done(function (data) {
         if (data.cookies.identifier_recovery_type === 'mobile'){
             send_code_handler(data.cookies.identifier_username, 'code', previous_page);
