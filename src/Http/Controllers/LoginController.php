@@ -51,6 +51,7 @@ class LoginController extends Controller
                 if ($result->user->is_admin == 1){
                     $url = route(config('dizatech_identifier.admin_login_redirect'));
                 }else{
+                    $request->session()->flash('registered_successfuly', TRUE);
                     $url = route(config('dizatech_identifier.user_login_redirect'));
                 }
                 return json_encode([
@@ -238,9 +239,6 @@ class LoginController extends Controller
 
     public function loginWithPassword(Request $request)
     {
-        $request->validate([
-            'password' => ['required', 'min:6']
-        ]);
         $username = \request()->cookie('identifier_username');
         $url = '';
         $result = IdentifierLoginFacade::loginViaPassword($username,$request->password);
