@@ -297,6 +297,7 @@ class IdentifierLoginRepository
         if ($user_object->count() > 0){
             return $user_object->first();
         }else{
+            session(['new_user_mobile' => $mobile]);
             $user_object = $this->user()->fill([
                 'username' => stringToken(8, 'abcdefg123456789'),
                 'mobile' => $mobile,

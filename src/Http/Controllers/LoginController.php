@@ -46,13 +46,27 @@ class LoginController extends Controller
         $url = '';
         $result = IdentifierLoginFacade::confirmSMS($request->mobile, $request->code);
         if ($result->status == 200){
+            $new_user_mobile = session('new_user_mobile');
+            session()->forget('new_user_mobile');
             $attempLogin = IdentifierLoginFacade::attempLogin($result->user);
             if ($attempLogin->status == 200){
-                if ($result->user->is_admin == 1){
-                    $url = route(config('dizatech_identifier.admin_login_redirect'));
-                }else{
+                $redirect_url = $request->session()->get('redirect_url');
+                if( $redirect_url != '' ){
+                    $url = $redirect_url;
+                }
+                else{
+                    if ($result->user->is_admin == 1){
+                        $url = route(config('dizatech_identifier.admin_login_redirect'));
+                    }else{
+                        $url = route(config('dizatech_identifier.user_login_redirect'));
+                    }
+                }
+
+                if(
+                    $new_user_mobile == $request->mobile && //user is just registered
+                    $result->user->is_admin == 0 //user is not admin
+                ){
                     $request->session()->flash('registered_successfuly', TRUE);
-                    $url = route(config('dizatech_identifier.user_login_redirect'));
                 }
                 return json_encode([
                     'status' => $result->status,
@@ -243,10 +257,16 @@ class LoginController extends Controller
         $url = '';
         $result = IdentifierLoginFacade::loginViaPassword($username,$request->password);
         if ($result->status == 200){
-            if ($result->user->is_admin == 1){
-                $url = route(config('dizatech_identifier.admin_login_redirect'));
-            }else{
-                $url = route(config('dizatech_identifier.user_login_redirect'));
+            $redirect_url = $request->session()->get('redirect_url');
+            if( $redirect_url != '' ){
+                $url = $redirect_url;
+            }
+            else{
+                if ($result->user->is_admin == 1){
+                    $url = route(config('dizatech_identifier.admin_login_redirect'));
+                }else{
+                    $url = route(config('dizatech_identifier.user_login_redirect'));
+                }
             }
         }
         return json_encode([
