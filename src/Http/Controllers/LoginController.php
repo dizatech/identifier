@@ -3,6 +3,7 @@
 namespace Dizatech\Identifier\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Dizatech\Identifier\Events\UserVerifiedEvent;
 use Dizatech\Identifier\Facades\IdentifierLoginFacade;
 use Dizatech\Identifier\Http\Requests\ChangePasswordRequest;
 use Illuminate\Http\Request;
@@ -66,6 +67,7 @@ class LoginController extends Controller
                     $new_user_mobile == $request->mobile && //user is just registered
                     $result->user->is_admin == 0 //user is not admin
                 ){
+                    UserVerifiedEvent::dispatch($result->user);
                     $request->session()->flash('registered_successfuly', TRUE);
                 }
                 return json_encode([
