@@ -35,6 +35,22 @@ class LoginController extends Controller
         ]);
     }
 
+    public function sendRegCode(Request $request)
+    {
+        $request->validate([
+            'mobile'        => ['required', 'mobile'],
+            'accepted_tos'  => ['required']
+        ],[
+            'mobile.required'       => 'فیلد موبایل الزامی است.',
+            'accepted_tos.required' => 'پذیرش قوانین الزامی است.'
+        ]);
+        $result = IdentifierLoginFacade::sendSMS($request->mobile);
+        return json_encode([
+            'status' => $result['status'],
+            'message' => $result['message']
+        ]);
+    }
+
     public function confirmCode(Request $request)
     {
         $request->validate([

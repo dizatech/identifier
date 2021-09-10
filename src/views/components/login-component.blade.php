@@ -71,9 +71,24 @@
                                             <strong></strong>
                                         </span>
                                     </div>
-                                    <p>
-                                        قوانین <a href="{{ config('dizatech_identifier.terms_url') }}" class="forgot-password">{{ config('dizatech_identifier.site_title') }}</a> را مطالعه کرده‌ام و قبول دارم.
-                                    </p>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" name="accepted_tos"
+                                                id="accepted_tos" value="checkedValue" class="custom-control-input accepted_tos">
+                                            <label class="custom-control-label" for="accepted_tos">
+                                                قوانین
+                                                <a
+                                                    href="{{ config('dizatech_identifier.terms_url') }}"
+                                                    class="forgot-password">
+                                                    {{ config('dizatech_identifier.site_title') }}
+                                                </a>
+                                                را مطالعه کرده‌ام و قبول دارم.
+                                            </label>
+                                        </div>
+                                        <span class="invalid-feedback d-none">
+                                            <strong></strong>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

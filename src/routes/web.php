@@ -8,6 +8,7 @@ Route::group([
 ], function () {
     Route::get('/{page?}', 'LoginController@show')->name('identifier.login')->middleware('guest');
     Route::post('/send/code', 'LoginController@sendCode')->name('identifier.send.code')->middleware('guest');
+    Route::post('/send/reg_code', 'LoginController@sendRegCode')->name('identifier.send.code')->middleware('guest');
     Route::post('/confirm/code', 'LoginController@confirmCode')->name('identifier.confirm.code')->middleware('guest');
     Route::post('/check/mobile', 'LoginController@checkMobile')->name('identifier.check.mobile')->middleware('guest');
     Route::post('/logout', 'LoginController@logout')->name('identifier.logout');

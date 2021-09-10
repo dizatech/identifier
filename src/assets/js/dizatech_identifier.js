@@ -287,7 +287,8 @@ $('.code_step').on('click', function (e) {
     e.preventDefault();
     startLoading();
     let mobile_num = $('.register_mobile').val();
-    send_code_handler(mobile_num,'code', 'register');
+    let accepted_tos = $('.accepted_tos').prop('checked') ? true : null;
+    send_reg_code_handler(mobile_num, accepted_tos, 'code', 'register');
 });
 
 function send_email_handler(username, current_page, previous_page) {
@@ -312,6 +313,38 @@ function send_email_handler(username, current_page, previous_page) {
         }else {
             show_error_messages(response);
             msg = 'خطای غیره منتظره‌ای رخ داده.';
+        }
+        alertify.error(msg);
+    });
+}
+
+function send_reg_code_handler(mobile_num, accepted_tos, current_page, previous_page){
+    sendRegCode(mobile_num, accepted_tos).done(function (code_result) {
+        setCookie('identifier_username', mobile_num).done(function () {
+            if (code_result.status === 200){
+                send_otp($('.otp_timer'));
+                alertify.success(code_result.message);
+                $('.mobile_num').html('(' + mobile_num + ')');
+                stopLoading();
+                change_url('','','/auth/code');
+                slide_element(previous_page, current_page);
+                previous_pages.push(previous_page);
+            }else {
+                stopLoading();
+                alertify.error(code_result.message);
+            }
+        }).fail(function () {
+            stopLoading();
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        });
+    }).fail(function (response) {
+        stopLoading();
+        let msg = '';
+        if (response.status === 500){
+            msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
+        }else {
+            show_error_messages(response);
+            msg = 'لطفا خطاهای فرم را بررسی کنید.';
         }
         alertify.error(msg);
     });
@@ -407,9 +440,11 @@ $('.otp_timer').on('click', function (e) {
 
 $('.create_new_account').on('click', function (e) {
     e.preventDefault();
-    startLoading();
-    let mobile_num = $('.not_registered_mobile').val();
-    send_code_handler(mobile_num,'code', 'not_registered');
+    url = window.location.href.replace(/\/$/, '');
+    page_type = url.substring(url.lastIndexOf('/') + 1);
+    change_url('','','/auth/register');
+    slide_element(page_type, 'register');
+    previous_pages.push('default');
 });
 
 let perv_page = '';
@@ -487,6 +522,18 @@ function show_error_messages(res){
             }
         }
     }
+}
+
+function sendRegCode(mobile_field, accepted_tos) {
+    return $.ajax({
+        type: "post",
+        url: baseUrl + '/auth/send/reg_code',
+        dataType: 'json',
+        data: {
+            'mobile': mobile_field,
+            'accepted_tos': accepted_tos
+        }
+    });
 }
 
 function sendCode(mobile_field) {
