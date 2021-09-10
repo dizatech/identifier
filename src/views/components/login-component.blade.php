@@ -79,7 +79,7 @@
                                                 قوانین
                                                 <a
                                                     href="{{ config('dizatech_identifier.terms_url') }}"
-                                                    class="forgot-password">
+                                                    class="forgot-password tos-link">
                                                     {{ config('dizatech_identifier.site_title') }}
                                                 </a>
                                                 را مطالعه کرده‌ام و قبول دارم.
