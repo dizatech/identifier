@@ -8,6 +8,7 @@ use Dizatech\Identifier\Facades\IdentifierLoginFacade;
 use Dizatech\Identifier\Http\Requests\ChangePasswordRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Morilog\Jalali\CalendarUtils;
 
 class LoginController extends Controller
 {
@@ -23,6 +24,12 @@ class LoginController extends Controller
 
     public function sendCode(Request $request)
     {
+        if( $request->has('mobile') ){
+            $request->merge([
+                'mobile'    => CalendarUtils::convertNumbers($request->mobile, TRUE)
+            ]);
+        }
+
         $request->validate([
             'mobile' => ['required', 'mobile']
         ],[
@@ -37,6 +44,12 @@ class LoginController extends Controller
 
     public function sendRegCode(Request $request)
     {
+        if( $request->has('mobile') ){
+            $request->merge([
+                'mobile'    => CalendarUtils::convertNumbers($request->mobile, TRUE)
+            ]);
+        }
+
         $request->validate([
             'mobile'        => ['required', 'mobile'],
             'accepted_tos'  => ['required']
@@ -53,6 +66,16 @@ class LoginController extends Controller
 
     public function confirmCode(Request $request)
     {
+        if( $request->has('mobile') ){
+            $request->merge([
+                'mobile'    => CalendarUtils::convertNumbers($request->mobile, TRUE)
+            ]);
+        }
+        if( $request->has('code') ){
+            $request->merge([
+                'code'    => CalendarUtils::convertNumbers($request->code, TRUE)
+            ]);
+        }
         $request->validate([
             'mobile' => ['required', 'mobile'],
             'code' => ['required']
@@ -102,6 +125,12 @@ class LoginController extends Controller
 
     public function checkMobile(Request $request)
     {
+        if( $request->has('mobile') ){
+            $request->merge([
+                'mobile'    => CalendarUtils::convertNumbers($request->mobile, TRUE)
+            ]);
+        }
+
         $request->validate([
             'mobile' => ['required', 'mobile']
         ],[
@@ -115,6 +144,12 @@ class LoginController extends Controller
 
     public function checkRegisteredUser(Request $request)
     {
+        if( $request->has('username_input') ){
+            $request->merge([
+                'username_input'    => CalendarUtils::convertNumbers($request->username_input, TRUE)
+            ]);
+        }
+
         $request->validate([
             'username_input' => ['required', 'string']
         ],[
@@ -148,6 +183,12 @@ class LoginController extends Controller
 
     public function checkUsername(Request $request)
     {
+        if( $request->has('username') ){
+            $request->merge([
+                'username'    => CalendarUtils::convertNumbers($request->username, TRUE)
+            ]);
+        }
+
         $request->validate([
             'username' => ['required', 'string']
         ],[
@@ -177,6 +218,16 @@ class LoginController extends Controller
 
     public function confirmRecoveryCode(Request $request)
     {
+        if( $request->has('username') ){
+            $request->merge([
+                'username'    => CalendarUtils::convertNumbers($request->username, TRUE)
+            ]);
+        }
+        if( $request->has('code') ){
+            $request->merge([
+                'code'    => CalendarUtils::convertNumbers($request->code, TRUE)
+            ]);
+        }
         $request->validate([
             'username' => ['required', 'string'],
             'code' => ['required'],
@@ -205,6 +256,12 @@ class LoginController extends Controller
 
     public function confirmEmailCode(Request $request)
     {
+        if( $request->has('code') ){
+            $request->merge([
+                'code'    => CalendarUtils::convertNumbers($request->code, TRUE)
+            ]);
+        }
+
         $request->validate([
             'username' => ['required', 'email'],
             'code' => ['required']
