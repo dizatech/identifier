@@ -7,6 +7,19 @@ $.ajaxSetup({
 
 $(function () {
     $('[data-toggle="tooltip"]').tooltip();
+
+    $('.form-control').on('keyup', function(e){
+        if(e.keyCode == 13){
+            $(this).closest('.login-form').find('.btn').trigger('click');
+        }
+    });
+
+    $(document).ajaxError(function(event, request){
+        if( request.status == 409 ){
+            alertify.error('شما قبلا وارد حساب کاربری خود شده‌اید.');
+            location.reload();
+        }
+    });
 });
 
 // Plugins
@@ -48,9 +61,14 @@ $('.forget_action').on('click', function (e) {
                     openRecoveryCodePage('recovery_code', 'recovery');
                 }
                 stopLoading();
-            }).fail(function () {
+            }).fail(function (response) {
                 stopLoading();
-                alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                if( response.status == 0 ){
+                    alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+                }
+                else{
+                    alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                }
             });
         }else {
             stopLoading();
@@ -59,8 +77,12 @@ $('.forget_action').on('click', function (e) {
         }
     }).fail(function (response) {
         stopLoading();
-        show_error_messages(response);
-        alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else{
+            show_error_messages(response);
+        }
     });
 });
 
@@ -78,12 +100,21 @@ $('.recovery_timer').on('click', function (e) {
             }
         }).fail(function () {
             stopLoading();
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+            if( response.status == 0 ){
+                alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+            }
+            else{
+                show_error_messages(response);
+            }
         });
-    }).fail(function () {
+    }).fail(function (response) {
         stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else{
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
     });
 });
 
@@ -99,9 +130,14 @@ $('.confirm_recovery_code').on('click', function (e) {
             if (code_result.status === 200){
                 setCookie('identifier_verified_recovery', 'user_verified').done(function () {
                     openChangePasswordPage('change_password', 'recovery_code');
-                }).fail(function () {
+                }).fail(function (response) {
                     stopLoading();
-                    alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                    if( response.status == 0 ){
+                        alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+                    }
+                    else{
+                        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                    }
                 });
             }else {
                 alertify.error(code_result.message);
@@ -109,12 +145,21 @@ $('.confirm_recovery_code').on('click', function (e) {
             }
         }).fail(function (response) {
             stopLoading();
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+            if( response.status == 0 ){
+                alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+            }
+            else{
+                show_error_messages(response);
+            }
         });
-    }).fail(function () {
+    }).fail(function (response) {
         stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else{
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
     });
 });
 
@@ -141,8 +186,12 @@ $('.change_password_btn').on('click', function (e) {
         },
         error: function (response) {
             stopLoading();
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+            if( response.status == 0 ){
+                alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+            }
+            else{
+                show_error_messages(response);
+            }
         }
     });
 });
@@ -189,8 +238,12 @@ $('.login_with_password').on('click', function (e) {
         },
         error: function (response) {
             stopLoading();
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+            if( response.status == 0 ){
+                alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+            }
+            else{
+                show_error_messages(response);
+            }
         }
     });
 });
@@ -209,9 +262,14 @@ function openCodePage(previous_page) {
         }else {
             send_email_handler(data.cookies.identifier_username, 'email_code', previous_page);
         }
-    }).fail(function () {
+    }).fail(function (response) {
         stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else{
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
     });
 }
 
@@ -263,14 +321,24 @@ $('.account_login').on('click', function (e) {
                     }).done(function () {
                         openPasswordPage('password', 'default');
                         stopLoading();
-                    }).fail(function () {
+                    }).fail(function (response) {
                         stopLoading();
-                        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                        if( response.status == 0 ){
+                            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+                        }
+                        else{
+                            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                        }
                     });
                 }
-            }).fail(function () {
+            }).fail(function (response) {
                 stopLoading();
-                alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                if( response.status == 0 ){
+                    alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+                }
+                else{
+                    alertify.error('خطای غیره منتظره‌ای رخ داده.');
+                }
             });
         }else {
             stopLoading();
@@ -278,8 +346,12 @@ $('.account_login').on('click', function (e) {
         }
     }).fail(function (response) {
         stopLoading();
-        show_error_messages(response);
-        alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+            if( response.status == 0 ){
+                alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+            }
+            else{
+                show_error_messages(response);
+            }
     });
 });
 
@@ -298,13 +370,22 @@ $('.confirm_email_code').on('click', function (e) {
                     stopLoading();
                 }
             }).fail(function (response) {
-            stopLoading();
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
-        });
-    }).fail(function (data) {
+                stopLoading();
+                if( response.status == 0 ){
+                    alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+                }
+                else{
+                    show_error_messages(response);
+                }
+            });
+    }).fail(function (response) {
         stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else{
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
     });
 });
 
@@ -333,13 +414,18 @@ function send_email_handler(username, current_page, previous_page) {
     }).fail(function (response) {
         stopLoading();
         let msg = '';
-        if (response.status === 500){
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else if (response.status === 500){
             msg = 'خطایی در ارسال ایمیل رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
-        }else {
+            alertify.error(msg);
+        }
+        else {
             show_error_messages(response);
             msg = 'خطای غیره منتظره‌ای رخ داده.';
+            alertify.error(msg);
         }
-        alertify.error(msg);
     });
 }
 
@@ -358,20 +444,27 @@ function send_reg_code_handler(mobile_num, accepted_tos, current_page, previous_
                 stopLoading();
                 alertify.error(code_result.message);
             }
-        }).fail(function () {
+        }).fail(function (response) {
             stopLoading();
-            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+            if( response.status == 0 ){
+                alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+            }
+            else{
+                alertify.error('خطای غیره منتظره‌ای رخ داده.');
+            }
         });
     }).fail(function (response) {
         stopLoading();
         let msg = '';
-        if (response.status === 500){
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else if(response.status === 500){
             msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
+            alertify.error(msg);
         }else {
             show_error_messages(response);
-            msg = 'لطفا خطاهای فرم را بررسی کنید.';
         }
-        alertify.error(msg);
     });
 }
 
@@ -390,20 +483,27 @@ function send_code_handler(mobile_num, current_page, previous_page) {
                 stopLoading();
                 alertify.error(code_result.message);
             }
-        }).fail(function () {
+        }).fail(function (response) {
             stopLoading();
-            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+            if( response.status == 0 ){
+                alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+            }
+            else{
+                alertify.error('خطای غیره منتظره‌ای رخ داده.');
+            }
         });
     }).fail(function (response) {
         stopLoading();
         let msg = '';
-        if (response.status === 500){
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else if(response.status === 500){
             msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
+            alertify.error(msg);
         }else {
             show_error_messages(response);
-            msg = 'لطفا خطاهای فرم را بررسی کنید.';
         }
-        alertify.error(msg);
     });
 }
 
@@ -424,12 +524,21 @@ $('.confirm_sms_code').on('click', function (e) {
             }
         }).fail(function (response) {
             stopLoading();
-            show_error_messages(response);
-            alertify.error('لطفا خطاهای فرم را بررسی کنید.');
+            if( response.status == 0 ){
+                alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+            }
+            else{
+                show_error_messages(response);
+            }
         });
-    }).fail(function () {
+    }).fail(function (response) {
         stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else{
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
     });
 });
 
@@ -449,17 +558,25 @@ $('.otp_timer').on('click', function (e) {
         }).fail(function () {
             stopLoading();
             let msg = '';
-            if (response.status === 500){
-                msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
-            }else {
-                show_error_messages(response);
-                msg = 'لطفا خطاهای فرم را بررسی کنید.';
+            if( response.status == 0 ){
+                alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
             }
-            alertify.error(msg);
+            else if (response.status === 500){
+                msg = 'خطایی در ارسال پیامک رخ داده. لطفا چند دقیقه دیگر دوباره امتحان کنید یا به ما اطلاع دهید.';
+                alertify.error(msg);
+            }
+            else {
+                show_error_messages(response);
+            }
         });
-    }).fail(function () {
+    }).fail(function (response) {
         stopLoading();
-        alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        if( response.status == 0 ){
+            alertify.error('لطفا اتصال اینترنت را بررسی کنید.');
+        }
+        else{
+            alertify.error('خطای غیره منتظره‌ای رخ داده.');
+        }
     });
 });
 
@@ -516,8 +633,12 @@ function hide_error_messages(){
         .removeClass('is-invalid');
 }
 
-function show_error_messages(res){
-    let response = res;
+function show_error_messages(response){
+    if( response.status == 409 ){
+        return;
+    }
+
+    alertify.error('لطفا خطاهای فرم را بررسی کنید.');
     $('.form-group')
         .find('.invalid-feedback')
         .addClass('d-none')
