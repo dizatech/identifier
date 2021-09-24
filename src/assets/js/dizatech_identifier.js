@@ -10,7 +10,7 @@ $(function () {
 
     $('.form-control').on('keyup', function(e){
         if(e.keyCode == 13){
-            $(this).closest('.login-form').find('.btn').trigger('click');
+            $(this).closest('.segment').find('.btn').trigger('click');
         }
     });
 
