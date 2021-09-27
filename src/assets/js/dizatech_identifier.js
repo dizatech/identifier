@@ -19,6 +19,10 @@ $(function () {
             alertify.error('شما قبلا وارد حساب کاربری خود شده‌اید.');
             location.reload();
         }
+        else if( request.status == 419 ){
+            alertify.error('نشست کاری شما باطل شده است.');
+            location.reload();
+        }
     });
 });
 
@@ -634,7 +638,7 @@ function hide_error_messages(){
 }
 
 function show_error_messages(response){
-    if( response.status == 409 ){
+    if( response.status == 409 || response.status == 419 ){
         return;
     }
 
